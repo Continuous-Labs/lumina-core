@@ -1,0 +1,25 @@
+{
+  "name": "@continuouslabs/lumina-react",
+  "version": "0.1.0",
+  "description": "React adapter for Lumina i18n.",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {
+    "@continuouslabs/lumina": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "unbuild": "^2.0.0",
+    "@types/react": "^18.0.0"
+  },
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub"
+  }
+}

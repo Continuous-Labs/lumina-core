@@ -1,0 +1,24 @@
+{
+  "name": "@continuouslabs/lumina-vue",
+  "version": "0.1.0",
+  "description": "Vue adapter for Lumina i18n.",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "peerDependencies": {
+    "vue": ">=3.0.0"
+  },
+  "dependencies": {
+    "@continuouslabs/lumina": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "unbuild": "^2.0.0",
+    "vue": "^3.3.0"
+  },
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub"
+  }
+}

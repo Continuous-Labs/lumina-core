@@ -1,0 +1,56 @@
+---
+import '../styles/index.css';
+
+/**
+ * Lumina Astro Demo
+ * Showcasing static extraction and dynamic runtime switching.
+ */
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>Lumina + Astro</title>
+	</head>
+	<body>
+		<div id="root">
+			<div class="card">
+				<div class="badge" t>Lumina + Astro</div>
+				
+				<h1 t>Automatic translations in Astro, without effort.</h1>
+				
+				<p t>This page uses the Lumina compiler to extract this static text. Even in a static-first framework, you can switch languages instantly on the client side.</p>
+				
+				<div class="controls">
+					<button id="to-en">English</button>
+					<button id="to-es" class="secondary">Español</button>
+				</div>
+				
+				<div style="margin-top: 2rem; opacity: 0.5; font-size: 0.9rem">
+					<span t>Change Language</span>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// Access the globally injected lumina client
+			const toEn = document.getElementById('to-en');
+			const toEs = document.getElementById('to-es');
+
+			toEn?.addEventListener('click', () => {
+				window.__lumina.locale = 'en';
+				toEn.classList.remove('secondary');
+				toEs?.classList.add('secondary');
+			});
+
+			toEs?.addEventListener('click', () => {
+				window.__lumina.locale = 'es';
+				toEs.classList.remove('secondary');
+				toEn?.classList.add('secondary');
+			});
+		</script>
+	</body>
+</html>

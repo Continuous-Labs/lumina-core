@@ -1,0 +1,26 @@
+{
+  "name": "lumina-i18n",
+  "version": "0.1.0",
+  "description": "Premium AI-powered i18n engine with zero-config extraction. Master package and CLI.",
+  "type": "module",
+  "bin": {
+    "lumina": "./bin/lumina.js"
+  },
+  "main": "./dist/index.mjs",
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "cac": "^6.7.14",
+    "picocolors": "^1.0.0",
+    "prompts": "^2.4.2",
+    "dotenv": "^16.3.1",
+    "@continuouslabs/lumina": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "unbuild": "^2.0.0"
+  }
+}

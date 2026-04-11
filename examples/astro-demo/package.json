@@ -1,0 +1,20 @@
+{
+  "name": "lumina-astro-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^3.0.0",
+    "@continuouslabs/lumina": "workspace:*",
+    "@continuouslabs/lumina-astro": "workspace:*"
+  },
+  "devDependencies": {
+    "@continuouslabs/unplugin-lumina": "workspace:*"
+  }
+}

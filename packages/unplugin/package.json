@@ -1,0 +1,29 @@
+{
+  "name": "@continuouslabs/unplugin-lumina",
+  "version": "0.1.0",
+  "description": "Universal compiler plugin for Lumina i18n.",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "peerDependencies": {
+    "vite": ">=3.0.0",
+    "webpack": ">=5.0.0",
+    "rollup": ">=2.0.0",
+    "esbuild": ">=0.15.0"
+  },
+  "dependencies": {
+    "unplugin": "^1.4.0",
+    "magic-string": "^0.30.3",
+    "@swc/core": "^1.3.82",
+    "@continuouslabs/lumina": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "unbuild": "^2.0.0"
+  },
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub"
+  }
+}
