@@ -1,6 +1,4 @@
-<div align="center">
-  <img src="./assets/lumina-logo.png" alt="Lumina Brand Header" width="100%" />
-</div>
+![Lumina Brand Header](./assets/lumina-logo.png)
 
 # Lumina i18n: Zero-Config Internationalization
 
