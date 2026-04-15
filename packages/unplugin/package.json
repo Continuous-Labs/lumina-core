@@ -2,6 +2,13 @@
   "name": "@continuouslabs/unplugin-lumina",
   "version": "1.0.0",
   "description": "Universal compiler plugin for Lumina i18n.",
+  "homepage": "https://lumina-i18n.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Continuous-Labs/lumina-core.git",
+    "directory": "packages/unplugin"
+  },
+  "bugs": "https://github.com/Continuous-Labs/lumina-core/issues",
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",

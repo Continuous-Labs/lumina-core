@@ -2,6 +2,13 @@
   "name": "lumina-i18n",
   "version": "1.0.0",
   "description": "Premium AI-powered i18n engine with zero-config extraction. Master package and CLI.",
+  "homepage": "https://lumina-i18n.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Continuous-Labs/lumina-core.git",
+    "directory": "packages/cli"
+  },
+  "bugs": "https://github.com/Continuous-Labs/lumina-core/issues",
   "type": "module",
   "bin": {
     "lumina": "./bin/lumina.js"

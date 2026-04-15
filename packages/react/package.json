@@ -2,6 +2,13 @@
   "name": "@continuouslabs/lumina-react",
   "version": "1.0.0",
   "description": "React adapter for Lumina i18n.",
+  "homepage": "https://lumina-i18n.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Continuous-Labs/lumina-core.git",
+    "directory": "packages/react"
+  },
+  "bugs": "https://github.com/Continuous-Labs/lumina-core/issues",
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",

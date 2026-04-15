@@ -2,6 +2,13 @@
   "name": "@continuouslabs/lumina-next",
   "version": "1.0.0",
   "description": "Lumina i18n adapter for Next.js.",
+  "homepage": "https://lumina-i18n.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Continuous-Labs/lumina-core.git",
+    "directory": "packages/next"
+  },
+  "bugs": "https://github.com/Continuous-Labs/lumina-core/issues",
   "type": "module",
   "exports": {
     ".": "./dist/index.mjs",

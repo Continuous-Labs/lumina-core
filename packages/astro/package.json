@@ -2,6 +2,13 @@
   "name": "@continuouslabs/lumina-astro",
   "version": "1.0.0",
   "description": "Astro adapter for Lumina i18n.",
+  "homepage": "https://lumina-i18n.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Continuous-Labs/lumina-core.git",
+    "directory": "packages/astro"
+  },
+  "bugs": "https://github.com/Continuous-Labs/lumina-core/issues",
   "type": "module",
   "main": "./dist/index.mjs",
   "exports": {
