@@ -99,193 +99,8 @@ export default config
       return null
     },
 
-    transform(code: string, id?: string) {
-      if (!id || !id.match(/\.(?:[jt]sx?|vue|astro)$/) || id.includes('node_modules')) return null
-
-      const s = new MagicString(code)
-      let hasChanged = false
-
-      const transformJS = (jsCode: string, offset = 0) => {
-        try {
-          const ast = parse(jsCode, {
-            sourceType: 'module',
-            plugins: ['jsx', 'typescript'],
-            errorRecovery: true
-          })
-
-          const traverseFn = (_traverse as any).default || _traverse
-          let needsVirtualConfig = false
-
-          traverseFn(ast, {
-            JSXOpeningElement(pathNode: any) {
-              const node = pathNode.node
-              const tagName = node.name.name || ''
-
-              // 1. Magic Provider Injection
-              if (tagName === 'LuminaProvider') {
-                const hasOptions = node.attributes.some(
-                  (attr: any) => attr.type === 'JSXAttribute' && attr.name.name === 'options'
-                )
-                
-                if (!hasOptions) {
-                  s.appendLeft(node.name.end + offset, ' options={__LUMINA_CONFIG__}')
-                  needsVirtualConfig = true
-                  hasChanged = true
-                }
-              }
-
-              // 2. Attribute 't' Extraction
-              if (NON_TRANSLATABLE_TAGS.has(tagName)) return
-
-              const tAttrIndex = node.attributes.findIndex(
-                (attr: any) => attr.type === 'JSXAttribute' && attr.name.name === 't'
-              )
-              
-              if (tAttrIndex !== -1) {
-                const tAttrNode = node.attributes[tAttrIndex]
-                const parentElement = pathNode.parent
-                let extractedText = ''
-
-                parentElement.children.forEach((child: any) => {
-                  if (child.type === 'JSXText') {
-                    extractedText += child.value
-                  } else if (child.type === 'JSXExpressionContainer') {
-                    extractedText += '{expr}'
-                  }
-                })
-
-                const cleanContent = extractedText.trim()
-
-                if (cleanContent) {
-                  const hash = 'id_' + hash64(cleanContent)
-                  EXTRACTED_KEYS.set(hash, cleanContent)
-
-                  const escaped = escapeForTemplateLiteral(cleanContent)
-                  const replacement = '{(globalThis.__lumina?.getText(' + "'" + hash + "'" + ', `' + escaped + '`) ?? `' + escaped + '`)}'
-
-                  const contentStart = node.end + offset
-                  const contentEnd = (parentElement.closingElement ? parentElement.closingElement.start : contentStart) + offset
-
-                  s.overwrite(contentStart, contentEnd, replacement)
-
-                  // Remove the 't' attribute
-                  let attrStart = tAttrNode.start + offset
-                  let attrEnd = tAttrNode.end + offset
-                  if (jsCode[tAttrNode.start - 1] === ' ') attrStart -= 1
-                  s.remove(attrStart, attrEnd)
-                  hasChanged = true
-                }
-              }
-            },
-
-            CallExpression(pathNode: any) {
-              const node = pathNode.node
-              
-              // 3. Magic Init Injection
-              if (node.callee.type === 'Identifier' && (node.callee.name === 'createLumina' || node.callee.name === 'initLumina')) {
-                if (node.arguments.length === 0) {
-                  s.appendLeft(node.end - 1 + offset, '__LUMINA_CONFIG__')
-                  needsVirtualConfig = true
-                  hasChanged = true
-                }
-              }
-
-              // 4. Function 't()' Extraction
-              if (node.callee.type === 'Identifier' && node.callee.name === 't') {
-                const arg = node.arguments[0]
-                if (arg && (arg.type === 'StringLiteral' || arg.type === 'TemplateLiteral')) {
-                  const content = arg.type === 'StringLiteral' ? arg.value : ''
-                  if (content) {
-                    const hash = 'id_' + hash64(content)
-                    EXTRACTED_KEYS.set(hash, content)
-                    const escaped = escapeForTemplateLiteral(content)
-                    const replacement = '(globalThis.__lumina?.getText(' + "'" + hash + "'" + ', `' + escaped + '`) ?? `' + escaped + '`)'
-                    
-                    s.overwrite(node.start + offset, node.end + offset, replacement)
-                    hasChanged = true
-                  }
-                }
-              }
-            }
-          })
-
-          if (needsVirtualConfig) {
-            const importStmt = "import __LUMINA_CONFIG__ from '@lumina/config'\n"
-            
-            let insertPos = 0
-            if (ast.program.directives && ast.program.directives.length > 0) {
-              const lastDirective = ast.program.directives[ast.program.directives.length - 1]
-              insertPos = lastDirective.end! + offset
-              s.appendRight(insertPos, '\n' + importStmt)
-            } else {
-              s.prepend(importStmt)
-            }
-          }
-        } catch (err) {
-          console.warn('[Lumina] Failed to transform JS in ' + id + ':', err)
-        }
-      }
-
-      const transformTemplate = (templateCode: string, offset: number) => {
-        // Regex-based 't' attribute extraction for Templates (Vue/Astro)
-        const tagRegex = /<([a-z0-9-]+)[^>]*\s(t)\s*[^>]*>([\s\S]*?)<\/\1>/gi
-        let match
-        while ((match = tagRegex.exec(templateCode)) !== null) {
-          const [fullMatch, tagName, tAttr, content] = match
-          const cleanContent = content.trim()
-          if (cleanContent && !NON_TRANSLATABLE_TAGS.has(tagName)) {
-            const hash = 'id_' + hash64(cleanContent)
-            EXTRACTED_KEYS.set(hash, cleanContent)
-            const escaped = escapeForTemplateLiteral(cleanContent)
-            
-            // Substitute content with framework-agnostic double braces
-            const replacementContent = `{{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }}`
-            
-            const start = offset + match.index + fullMatch.indexOf(content)
-            const end = start + content.length
-            s.overwrite(start, end, replacementContent)
-
-            // Remove 't' attribute
-            const tStart = offset + match.index + fullMatch.indexOf(` ${tAttr}`)
-            const tEnd = tStart + tAttr.length + 1
-            s.remove(tStart, tEnd)
-            hasChanged = true
-          }
-        }
-      }
-
-      if (id.endsWith('.vue')) {
-        const scriptMatch = code.match(/<script[^>]*>([\s\S]*?)<\/script>/)
-        if (scriptMatch) {
-          transformJS(scriptMatch[1], scriptMatch.index! + scriptMatch[0].indexOf(scriptMatch[1]))
-        }
-
-        const templateMatch = code.match(/<template>([\s\S]*?)<\/template>/)
-        if (templateMatch) {
-          transformTemplate(templateMatch[1], templateMatch.index! + templateMatch[0].indexOf(templateMatch[1]))
-        }
-      } else if (id.endsWith('.astro')) {
-        // Astro Frontmatter: --- content ---
-        const astroMatch = code.match(/^---([\s\S]*?)---/)
-        if (astroMatch) {
-          transformJS(astroMatch[1], astroMatch.index! + 3) // +3 for '---'
-          
-          const templateCode = code.slice(astroMatch[0].length)
-          transformTemplate(templateCode, astroMatch[0].length)
-        } else {
-          // No frontmatter, treat whole thing as template
-          transformTemplate(code, 0)
-        }
-      } else {
-        transformJS(code, 0)
-      }
-
-      if (!hasChanged) return null
-
-      return {
-        code: s.toString(),
-        map: s.generateMap({ hires: true })
-      }
+    transform(code: string, id: string) {
+      return transformLuminaCode(code, id, options)
     },
 
     buildEnd() {
@@ -313,3 +128,202 @@ export const vitePlugin = luminaUnplugin.vite
 export const webpackPlugin = luminaUnplugin.webpack
 export const rollupPlugin = luminaUnplugin.rollup
 export const esbuildPlugin = luminaUnplugin.esbuild
+
+/**
+ * Main transformation engine for Lumina i18n.
+ * Extracted into a standalone function for testing purposes.
+ */
+export function transformLuminaCode(code: string, id: string, options: LuminaPluginOptions = {}) {
+  if (!id.match(/\.(?:[jt]sx?|vue|astro)$/) || id.includes('node_modules')) return null
+
+  const s = new MagicString(code)
+  let hasChanged = false
+
+  const transformJS = (jsCode: string, offset = 0) => {
+    try {
+      const ast = parse(jsCode, {
+        sourceType: 'module',
+        plugins: ['jsx', 'typescript'],
+        errorRecovery: true
+      })
+
+      const traverseFn = (_traverse as any).default || _traverse
+      let needsVirtualConfig = false
+
+      traverseFn(ast, {
+        JSXOpeningElement(pathNode: any) {
+          const node = pathNode.node
+          const tagName = node.name.name || ''
+
+          // 1. Magic Provider Injection
+          if (tagName === 'LuminaProvider') {
+            const hasOptions = node.attributes.some(
+              (attr: any) => attr.type === 'JSXAttribute' && attr.name.name === 'options'
+            )
+            
+            if (!hasOptions) {
+              s.appendLeft(node.name.end + offset, ' options={__LUMINA_CONFIG__}')
+              needsVirtualConfig = true
+              hasChanged = true
+            }
+          }
+
+          // 2. Attribute 't' Extraction
+          if (NON_TRANSLATABLE_TAGS.has(tagName)) return
+
+          const tAttrIndex = node.attributes.findIndex(
+            (attr: any) => attr.type === 'JSXAttribute' && attr.name.name === 't'
+          )
+          
+          if (tAttrIndex !== -1) {
+            const tAttrNode = node.attributes[tAttrIndex]
+            const parentElement = pathNode.parent
+            let extractedText = ''
+
+            parentElement.children.forEach((child: any) => {
+              if (child.type === 'JSXText') {
+                extractedText += child.value
+              } else if (child.type === 'JSXExpressionContainer') {
+                extractedText += '{expr}'
+              }
+            })
+
+            const cleanContent = extractedText.trim()
+
+            if (cleanContent) {
+              const hash = 'id_' + hash64(cleanContent)
+              EXTRACTED_KEYS.set(hash, cleanContent)
+
+              const escaped = escapeForTemplateLiteral(cleanContent)
+              const replacement = '{(globalThis.__lumina?.getText(' + "'" + hash + "'" + ', `' + escaped + '`) ?? `' + escaped + '`)}'
+
+              const contentStart = node.end + offset
+              const contentEnd = (parentElement.closingElement ? parentElement.closingElement.start : contentStart) + offset
+
+              s.overwrite(contentStart, contentEnd, replacement)
+
+              // Remove the 't' attribute
+              let attrStart = tAttrNode.start + offset
+              let attrEnd = tAttrNode.end + offset
+              if (jsCode[tAttrNode.start - 1] === ' ') attrStart -= 1
+              s.remove(attrStart, attrEnd)
+              hasChanged = true
+            }
+          }
+        },
+
+        CallExpression(pathNode: any) {
+          const node = pathNode.node
+          
+          // 3. Magic Init Injection
+          if (node.callee.type === 'Identifier' && (node.callee.name === 'createLumina' || node.callee.name === 'initLumina')) {
+            if (node.arguments.length === 0) {
+              s.appendLeft(node.end - 1 + offset, '__LUMINA_CONFIG__')
+              needsVirtualConfig = true
+              hasChanged = true
+            }
+          }
+
+          // 4. Function 't()' Extraction
+          if (node.callee.type === 'Identifier' && node.callee.name === 't') {
+            const arg = node.arguments[0]
+            if (arg && (arg.type === 'StringLiteral' || arg.type === 'TemplateLiteral')) {
+              const content = arg.type === 'StringLiteral' ? arg.value : ''
+              if (content) {
+                const hash = 'id_' + hash64(content)
+                EXTRACTED_KEYS.set(hash, content)
+                const escaped = escapeForTemplateLiteral(content)
+                const replacement = '(globalThis.__lumina?.getText(' + "'" + hash + "'" + ', `' + escaped + '`) ?? `' + escaped + '`)'
+                
+                s.overwrite(node.start + offset, node.end + offset, replacement)
+                hasChanged = true
+              }
+            }
+          }
+        }
+      })
+
+      if (needsVirtualConfig) {
+        const importStmt = "import __LUMINA_CONFIG__ from '@lumina/config'\n"
+        
+        let insertPos = 0
+        if (ast.program.directives && ast.program.directives.length > 0) {
+          const lastDirective = ast.program.directives[ast.program.directives.length - 1]
+          insertPos = lastDirective.end! + offset
+          s.appendRight(insertPos, '\n' + importStmt)
+        } else {
+          s.prepend(importStmt)
+        }
+      }
+    } catch (err) {
+      console.warn('[Lumina] Failed to transform JS in ' + id + ':', err)
+    }
+  }
+
+  const transformTemplate = (templateCode: string, offset: number) => {
+    // Regex-based 't' attribute extraction for Templates (Vue/Astro)
+    const tagRegex = /<([a-z0-9-]+)[^>]*\s(t)\s*[^>]*>([\s\S]*?)<\/\1>/gi
+    let match
+    while ((match = tagRegex.exec(templateCode)) !== null) {
+      const [fullMatch, tagName, tAttr, content] = match
+      
+      // Normalize expressions to {expr} to match JSX behavior
+      // This handles {{vue}} and {astro} styles
+      const normalizedContent = content.trim()
+        .replace(/\{\{[\s\S]*?\}\}/g, '{expr}')
+        .replace(/\{[^\}]+\}/g, (m) => m === '{expr}' ? m : '{expr}')
+
+      if (normalizedContent && !NON_TRANSLATABLE_TAGS.has(tagName)) {
+        const hash = 'id_' + hash64(normalizedContent)
+        EXTRACTED_KEYS.set(hash, normalizedContent)
+        const escaped = escapeForTemplateLiteral(normalizedContent)
+        
+        // Substitute content with framework-agnostic double braces
+        const replacementContent = `{{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }}`
+        
+        const start = offset + match.index + fullMatch.indexOf(content)
+        const end = start + content.length
+        s.overwrite(start, end, replacementContent)
+
+        // Remove 't' attribute
+        const tStart = offset + match.index + fullMatch.indexOf(` ${tAttr}`)
+        const tEnd = tStart + tAttr.length + 1
+        s.remove(tStart, tEnd)
+        hasChanged = true
+      }
+    }
+  }
+
+  if (id.endsWith('.vue')) {
+    const scriptMatch = code.match(/<script[^>]*>([\s\S]*?)<\/script>/)
+    if (scriptMatch) {
+      transformJS(scriptMatch[1], scriptMatch.index! + scriptMatch[0].indexOf(scriptMatch[1]))
+    }
+
+    const templateMatch = code.match(/<template>([\s\S]*?)<\/template>/)
+    if (templateMatch) {
+      transformTemplate(templateMatch[1], templateMatch.index! + templateMatch[0].indexOf(templateMatch[1]))
+    }
+  } else if (id.endsWith('.astro')) {
+    // Astro Frontmatter: --- content ---
+    const astroMatch = code.match(/^---([\s\S]*?)---/)
+    if (astroMatch) {
+      transformJS(astroMatch[1], astroMatch.index! + 3) // +3 for '---'
+      
+      const templateCode = code.slice(astroMatch[0].length)
+      transformTemplate(templateCode, astroMatch[0].length)
+    } else {
+      // No frontmatter, treat whole thing as template
+      transformTemplate(code, 0)
+    }
+  } else {
+    transformJS(code, 0)
+  }
+
+  if (!hasChanged) return null
+
+  return {
+    code: s.toString(),
+    map: s.generateMap({ hires: true })
+  }
+}

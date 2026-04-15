@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { hash64, createSignal, createEffect, LuminaClient } from '../index.js'
+import { hash64, createSignal, createEffect, LuminaClient, initLumina } from '../index.js'
 
 describe('Lumina Core', () => {
   describe('hashing', () => {
@@ -70,6 +70,53 @@ describe('Lumina Core', () => {
       })
 
       expect(client.getText('id_1', 'Default')).toBe('Hello')
+    })
+
+    it('should support zero-config initialization', () => {
+      const client = new LuminaClient()
+      expect(client.locale).toBe('en')
+      expect(client.getText('any', 'fallback')).toBe('fallback')
+    })
+  })
+
+  describe('initLumina', () => {
+    it('should initialize a global instance with zero config', () => {
+      const client = initLumina()
+      expect(client.locale).toBe('en')
+    })
+
+    it('should accept custom options', () => {
+      const client = initLumina({ defaultLocale: 'es' })
+      expect(client.locale).toBe('es')
+    })
+  })
+
+  describe('Reactivity & State', () => {
+    it('should notify subscribers on locale change', () => {
+      const client = new LuminaClient({ locale: 'en' })
+      const callback = vi.fn()
+      client.subscribe(callback)
+      
+      client.locale = 'es'
+      expect(callback).toHaveBeenCalledTimes(1)
+    })
+
+    it('should handle missing message objects gracefully', () => {
+      const client = new LuminaClient({ 
+        locale: 'en',
+        messages: undefined 
+      })
+      expect(client.getText('any', 'fallback')).toBe('fallback')
+    })
+
+    it('should react to loadMessages for the current locale', () => {
+      const client = new LuminaClient({ locale: 'en' })
+      const callback = vi.fn()
+      client.subscribe(callback)
+
+      client.loadMessages('en', { 'hello': 'World' })
+      expect(callback).toHaveBeenCalled()
+      expect(client.getText('hello', '')).toBe('World')
     })
   })
 })

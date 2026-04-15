@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { GeminiProvider } from '../providers/gemini.js'
 import { OllamaProvider } from '../providers/ollama.js'
+import { OpenAIProvider } from '../providers/openai.js'
+import { AnthropicProvider } from '../providers/anthropic.js'
 
 describe('CLI Providers', () => {
   const mockFetch = vi.fn()
@@ -53,6 +55,48 @@ describe('CLI Providers', () => {
       expect(results).toEqual(['Hola'])
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:11434/api/generate',
+        expect.any(Object)
+      )
+    })
+  })
+
+  describe('OpenAIProvider', () => {
+    it('should translate text using OpenAI API', async () => {
+      const provider = new OpenAIProvider({ apiKey: 'test-key' })
+      
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          choices: [{
+            message: { content: '["Hola"]' }
+          }]
+        })
+      })
+
+      const results = await provider.translate(['Hello'], 'es', 'en')
+      expect(results).toEqual(['Hola'])
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://api.openai.com/v1/chat/completions',
+        expect.any(Object)
+      )
+    })
+  })
+
+  describe('AnthropicProvider', () => {
+    it('should translate text using Anthropic API', async () => {
+      const provider = new AnthropicProvider({ apiKey: 'test-key' })
+      
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          content: [{ text: '["Hola"]' }]
+        })
+      })
+
+      const results = await provider.translate(['Hello'], 'es', 'en')
+      expect(results).toEqual(['Hola'])
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://api.anthropic.com/v1/messages',
         expect.any(Object)
       )
     })

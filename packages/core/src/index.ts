@@ -103,6 +103,9 @@ export class LuminaClient {
     }
     // Trigger reactivity if we are adding to the current locale
     if (this._locale.value === locale) {
+      // We temporarily set it to empty and back to trigger subscribers
+      // because our signals only trigger on actual value change.
+      this._locale.value = ''
       this._locale.value = locale
     }
   }
