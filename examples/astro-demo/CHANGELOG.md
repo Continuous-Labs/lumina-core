@@ -1,6 +1,6 @@
 # lumina-astro-demo
 
-## 1.0.3
+## 1.0.4
 
 ### Patch Changes
 
