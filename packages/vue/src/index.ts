@@ -6,10 +6,10 @@ const LuminaSymbol = Symbol('lumina')
 /**
  * Vue Plugin for Lumina i18n
  */
-export const createLumina = (options: LuminaOptions): Plugin => {
+export const createLumina = (options?: LuminaOptions): Plugin => {
   return {
     install(app: App) {
-      const client = initLumina(options)
+      const client = initLumina(options || { locale: 'en', messages: {} })
       
       // Automatic global injection for Zero Config compiler support
       if (typeof window !== 'undefined') {
