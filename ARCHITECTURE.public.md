@@ -7,13 +7,14 @@ This document describes the technical implementation of Lumina i18n, focused on 
 Lumina utilizes **`unplugin`** to provide a universal compiler experience across Vite, Webpack, Rollup, and esbuild.
 
 ### A. The Extraction Engine
-- **Parser:** A Rust-based engine (SWC) scans the source code's Abstract Syntax Tree (AST).
+- **Parser:** A Javascript-native engine (Babel AST) scans the source code's Abstract Syntax Tree using exact UTF-16 character indexing to safely manipulate multi-byte strings.
 - **Targeting:** It identifies specific nodes:
     - Elements with the `t` or `i18n` attribute.
     - Tagged template literals using `t()`.
 - **Contextual Hashing:** Genera a hash (e.g., `id_7a8b`) based on:
     1. The raw text content.
     2. The relative file path (providing context to the LLM).
+- **Zero Config Provisioning:** Missing baseline dictionaries (like `/locales/es.json`) are injected automatically as placeholders to prevent any compilation disruptions.
 
 ### B. Code Mutation
 Before the code reaches the framework's bundler, Lumina re-writes the file in memory:
@@ -42,7 +43,7 @@ The client SDK is designed for zero impact on bundle size and performance.
 ## 4. Multi-Provider AI Engine
 
 Lumina's translation layer is designed to be provider-agnostic, supporting a wide range of AI backends:
-- **Cloud Providers:** Native support for Google Gemini (via `gemini-1.5-flash`) and OpenAI.
+- **Cloud Providers:** Native support for **OpenAI** (`gpt-4o-mini`), **Anthropic** (`claude-3-haiku`), and **Google Gemini** (`gemini-1.5-flash`).
 - **Local Providers:** Full support for **Ollama**, enabling private, local-first translation workflows with models like `llama3`.
 - **Batching & Context:** The engine automatically batches translation requests and injects file-system path context to help the LLM provide more accurate, context-aware translations.
 

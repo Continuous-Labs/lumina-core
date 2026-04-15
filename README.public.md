@@ -34,9 +34,9 @@ Lumina handles variables natively:
 
 Lumina shifts the heavy lifting from the browser to the build process using `unplugin` (Vite, Webpack, Rollup).
 
-1. **Extraction:** A high-performance SWC-based engine scans your source code.
+1. **Extraction:** A precise Babel-based AST engine scans your source code using exact UTF-16 character indexing to safely manipulate multi-byte strings and emojis without layout shifts.
 2. **Hashing:** Unique IDs are generated for each block of text based on content and file path.
-3. **Local Sync:** Translations are stored locally in `.lumina/locales/`. You can use your own API keys (OpenAI, Gemini, DeepL) or even local models via Ollama for automated local translations.
+3. **Local Sync:** Translations are stored locally in `.lumina/locales/`. If a language dictionary is missing, Lumina automatically generates a structural stub JSON to prevent build failures. You can use API keys (OpenAI, Anthropic, Gemini) or local models via Ollama.
 4. **Runtime Injection:** During build, the compiler re-writes your code to call the lightweight Lumina client efficiently.
 
 ## 📦 Open Source Core
@@ -73,6 +73,14 @@ Run your build command to extract keys into `original.json`.
 ### 4. AI Translation
 Translate your keys automatically:
 ```bash
+# Using OpenAI (Cloud)
+export LUMINA_OPENAI_API_KEY=your_key
+npx lumina-i18n translate --provider openai
+
+# Using Anthropic (Cloud)
+export LUMINA_ANTHROPIC_API_KEY=your_key
+npx lumina-i18n translate --provider anthropic
+
 # Using Gemini (Cloud)
 export LUMINA_GEMINI_API_KEY=your_key
 npx lumina-i18n translate --provider gemini
@@ -100,12 +108,12 @@ Lumina uses a `lumina.config.json` file at the root of your project. Here is the
 - **`defaultLocale`**: The language you write your code in.
 - **`locales`**: Array of target languages for translation.
 - **`outputDir`**: Where the JSON dictionaries will be stored.
-- **`provider`**: AI engine to use (`gemini` or `ollama`).
+- **`provider`**: AI engine to use (`openai`, `anthropic`, `gemini`, or `ollama`).
 - **`model`**: (Optional) Specific model ID for the provider.
 - **`endpoint`**: (Optional) Required for `ollama` local setup.
 
 > [!TIP]
-> **API Keys:** For security, it is highly recommended to use environment variables instead of hardcoding keys in the config file. Lumina automatically looks for `LUMINA_GEMINI_API_KEY`.
+> **API Keys:** For security, it is highly recommended to use environment variables instead of hardcoding keys in the config file. Lumina automatically looks for `LUMINA_OPENAI_API_KEY`, `LUMINA_ANTHROPIC_API_KEY`, or `LUMINA_GEMINI_API_KEY`.
 
 ## 🎨 Showcase Demos
 
