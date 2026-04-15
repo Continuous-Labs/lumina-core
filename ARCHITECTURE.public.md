@@ -66,7 +66,7 @@ Lumina is managed as a monorepo containing several core packages:
 
 - `@continuouslabs/lumina`: Hashing logic and Signals runtime.
 - `@continuouslabs/unplugin-lumina`: The unified build-time plugin.
-- `lumina-i18n`: Command-line tool for initialization and extraction.
+- `@continuouslabs/lumina-cli`: Command-line tool for initialization and extraction.
 - Framework Adapters: Specialized wrappers for `@continuouslabs/lumina-react`, `@continuouslabs/lumina-vue`, and `@continuouslabs/lumina-astro`.
 
 ---

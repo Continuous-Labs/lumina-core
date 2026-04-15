@@ -1,5 +1,15 @@
 # @continuouslabs/lumina-next
 
+## 1.0.7
+
+### Patch Changes
+
+- Rename CLI package to `@continuouslabs/lumina-cli` to include it in the organization scope.
+- Updated dependencies
+  - @continuouslabs/lumina@1.0.7
+  - @continuouslabs/lumina-react@1.0.7
+  - @continuouslabs/unplugin-lumina@1.0.7
+
 ## 1.0.6
 
 ### Patch Changes

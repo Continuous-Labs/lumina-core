@@ -54,13 +54,13 @@ The core engine and local plugins are fully open source. Developers can:
 ### 1. Installation
 ```bash
 pnpm add @continuouslabs/lumina
-pnpm add -D @continuouslabs/unplugin-lumina lumina-i18n
+pnpm add -D @continuouslabs/unplugin-lumina @continuouslabs/lumina-cli
 ```
 
 ### 2. Initialization
 Run the CLI to set up your project structure:
 ```bash
-npx lumina-i18n init
+npx @continuouslabs/lumina-cli init
 ```
 This creates `lumina.config.json` and the `.lumina/locales` directory.
 
@@ -80,18 +80,18 @@ Translate your keys automatically:
 ```bash
 # Using OpenAI (Cloud)
 export LUMINA_OPENAI_API_KEY=your_key
-npx lumina-i18n translate --provider openai
+npx @continuouslabs/lumina-cli translate --provider openai
 
 # Using Anthropic (Cloud)
 export LUMINA_ANTHROPIC_API_KEY=your_key
-npx lumina-i18n translate --provider anthropic
+npx @continuouslabs/lumina-cli translate --provider anthropic
 
 # Using Gemini (Cloud)
 export LUMINA_GEMINI_API_KEY=your_key
-npx lumina-i18n translate --provider gemini
+npx @continuouslabs/lumina-cli translate --provider gemini
 
 # Using Ollama (Local)
-npx lumina-i18n translate --provider ollama
+npx @continuouslabs/lumina-cli translate --provider ollama
 ```
 
 ## ⚙️ Project Configuration (`lumina.config.json`)

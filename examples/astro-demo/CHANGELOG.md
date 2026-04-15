@@ -1,5 +1,13 @@
 # lumina-astro-demo
 
+## 1.0.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @continuouslabs/lumina@1.0.7
+  - @continuouslabs/lumina-astro@1.0.7
+
 ## 1.0.6
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @continuouslabs/lumina
 
+## 1.0.7
+
+### Patch Changes
+
+- Rename CLI package to `@continuouslabs/lumina-cli` to include it in the organization scope.
+
 ## 1.0.6
 
 ### Patch Changes

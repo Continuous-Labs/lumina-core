@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina-next",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Lumina i18n adapter for Next.js.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {
