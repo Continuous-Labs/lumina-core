@@ -1,5 +1,13 @@
 # next-demo
 
+## 1.0.3
+
+### Patch Changes
+
+- Automated synchronization of GitHub Releases between private and public repositories.
+- CI/CD pipeline improvements for seamless public mirroring.
+- Updated internal dependencies to 1.0.3.
+
 ## 1.0.2
 
 ### Patch Changes
