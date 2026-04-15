@@ -4,6 +4,8 @@ import fs from 'fs'
 import path from 'path'
 import { GeminiProvider } from './providers/gemini.js'
 import { OllamaProvider } from './providers/ollama.js'
+import { OpenAIProvider } from './providers/openai.js'
+import { AnthropicProvider } from './providers/anthropic.js'
 import 'dotenv/config'
 
 const cli = cac('lumina')
@@ -35,7 +37,7 @@ cli
 
 cli
   .command('translate', 'Translate extracted strings using AI')
-  .option('--provider <provider>', 'AI Provider (gemini, ollama)')
+  .option('--provider <provider>', 'AI Provider (gemini, ollama, openai, anthropic)')
   .action(async (options) => {
     console.log(pc.cyan('\n  🤖 Starting Lumina AI Translation...\n'))
     
@@ -64,13 +66,23 @@ cli
     
     if (providerName === 'gemini') {
       provider = new GeminiProvider({
-        apiKey: process.env.LUMINA_GEMINI_API_KEY || config.apiKey,
-        model: config.model
+        apiKey: process.env.LUMINA_GEMINI_API_KEY || config.gemini?.apiKey || config.apiKey,
+        model: config.gemini?.model || config.model
       })
     } else if (providerName === 'ollama') {
       provider = new OllamaProvider({
-        endpoint: config.endpoint,
-        model: config.model
+        endpoint: config.ollama?.endpoint || config.endpoint,
+        model: config.ollama?.model || config.model
+      })
+    } else if (providerName === 'openai') {
+      provider = new OpenAIProvider({
+        apiKey: process.env.LUMINA_OPENAI_API_KEY || config.openai?.apiKey || config.apiKey,
+        model: config.openai?.model || config.model
+      })
+    } else if (providerName === 'anthropic') {
+      provider = new AnthropicProvider({
+        apiKey: process.env.LUMINA_ANTHROPIC_API_KEY || config.anthropic?.apiKey || config.apiKey,
+        model: config.anthropic?.model || config.model
       })
     }
     
