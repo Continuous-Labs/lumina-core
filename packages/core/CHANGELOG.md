@@ -1,5 +1,15 @@
 # @continuouslabs/lumina
 
+## 1.0.2
+
+### Patch Changes
+
+- Automated public release synchronization.
+
+  - Added dual-release workflow to publish GitHub Releases to both private and public repositories.
+  - Finalized SEO with premium favicon, Open Graph, and GTM.
+  - Added llms.txt for AI-powered tool discovery.
+
 ## 1.0.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina-vue",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Vue adapter for Lumina i18n.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {
