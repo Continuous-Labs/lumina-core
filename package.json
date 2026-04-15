@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
+    "build:portal": "pnpm --filter www... build",
     "test": "pnpm -r test"
   },
   "devDependencies": {
