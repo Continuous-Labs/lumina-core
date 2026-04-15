@@ -1,0 +1,31 @@
+{
+  "name": "@continuouslabs/lumina-next",
+  "version": "0.1.0",
+  "description": "Lumina i18n adapter for Next.js.",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./client": "./dist/client.mjs"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "peerDependencies": {
+    "next": ">=13.0.0",
+    "react": ">=18.0.0",
+    "webpack": ">=5.0.0"
+  },
+  "dependencies": {
+    "@continuouslabs/lumina": "workspace:*",
+    "@continuouslabs/lumina-react": "workspace:*",
+    "@continuouslabs/unplugin-lumina": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "unbuild": "^2.0.0"
+  },
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub"
+  }
+}
