@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="./assets/lumina-logo.png" alt="Lumina Brand Header" width="100%" />
+</div>
+
 # Lumina i18n: Zero-Config Internationalization
 
 Lumina i18n is a next-generation internationalization tool designed to eliminate 100% of the friction and boilerplate in frontend development. It operates on the premise of **Zero Configuration** and **Framework Agnosticism**.
@@ -91,18 +95,20 @@ npx lumina-i18n translate --provider gemini
 npx lumina-i18n translate --provider ollama
 ```
 
-## ⚙️ Configuration
+## ⚙️ Project Configuration (`lumina.config.json`)
 
-Lumina uses a `lumina.config.json` file at the root of your project. Here is the complete schema:
+Lumina uses a single configuration file to sync the CLI and the Build Plugin. Use nested objects for each provider:
 
 ```json
 {
   "defaultLocale": "en",
   "locales": ["en", "es", "fr"],
   "outputDir": "./.lumina/locales",
-  "provider": "gemini", 
-  "model": "gemini-1.5-flash",
-  "endpoint": "http://localhost:11434/api/generate"
+  "provider": "gemini",
+  "gemini": {
+    "model": "gemini-1.5-flash",
+    "apiKey": "YOUR_GEMINI_API_KEY"
+  }
 }
 ```
 
@@ -111,8 +117,12 @@ Lumina uses a `lumina.config.json` file at the root of your project. Here is the
 - **`locales`**: Array of target languages for translation.
 - **`outputDir`**: Where the JSON dictionaries will be stored.
 - **`provider`**: AI engine to use (`openai`, `anthropic`, `gemini`, or `ollama`).
-- **`model`**: (Optional) Specific model ID for the provider.
-- **`endpoint`**: (Optional) Required for `ollama` local setup.
+
+### Supported AI Providers:
+*   **Gemini** (`gemini`): Ideal for speed and technical precision.
+*   **OpenAI** (`openai`): Support for GPT-4o models.
+*   **Anthropic** (`anthropic`): Claude 3.5 support.
+*   **Ollama** (`ollama`): For local-first private workflows.
 
 > [!TIP]
 > **API Keys:** For security, it is highly recommended to use environment variables instead of hardcoding keys in the config file. Lumina automatically looks for `LUMINA_OPENAI_API_KEY`, `LUMINA_ANTHROPIC_API_KEY`, or `LUMINA_GEMINI_API_KEY`.
@@ -137,4 +147,8 @@ Lumina is rapidly evolving. Here's what's coming:
 - **Lumina Edge (Coming Soon):** Managed global hosting for your translations with <50ms latency.
 
 ---
-*Developed with ❤️ for the Developer Experience.*
+
+## **Maintainers & Credits**
+
+Lumina is designed and lead-engineered by **Felix Jara** ([felixjara.me](https://felixjara.me)).  
+Developed as a flagship project of **[Continuous Labs](https://clabs.tech)**.

@@ -1,4 +1,6 @@
-# Lumina i18n: Engineering Architecture (Public)
+# Lumina i18n: Engineering Architecture
+
+> A deep dive into the high-performance building blocks of Lumina.
 
 This document describes the technical implementation of Lumina i18n, focused on the **Build-Time Engine** and **Runtime Client**.
 
@@ -68,4 +70,8 @@ Lumina is managed as a monorepo containing several core packages:
 - Framework Adapters: Specialized wrappers for `@continuouslabs/lumina-react`, `@continuouslabs/lumina-vue`, and `@continuouslabs/lumina-astro`.
 
 ---
-*Developed with ❤️ for the Developer Experience.*
+
+## **Maintainers & Credits**
+
+Lumina is designed and lead-engineered by **Felix Jara** ([felixjara.me](https://felixjara.me)).  
+Developed as a flagship project of **[Continuous Labs](https://clabs.tech)**.
