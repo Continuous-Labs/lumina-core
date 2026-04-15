@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina-astro",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Astro adapter for Lumina i18n.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {

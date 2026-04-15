@@ -1,5 +1,11 @@
 # @continuouslabs/lumina
 
+## 1.0.9
+
+### Patch Changes
+
+- Ensuring all terminal command examples and animations use the correct scoped package name: `@continuouslabs/lumina-cli`.
+
 ## 1.0.8
 
 ### Patch Changes
