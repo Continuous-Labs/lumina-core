@@ -172,7 +172,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
           if (NON_TRANSLATABLE_TAGS.has(tagName)) return
 
           const tAttrIndex = node.attributes.findIndex(
-            (attr: any) => attr.type === 'JSXAttribute' && attr.name.name === 't'
+            (attr: any) => attr.type === 'JSXAttribute' && (attr.name.name === 't' || attr.name.name === 'i18n')
           )
           
           if (tAttrIndex !== -1) {
@@ -260,9 +260,9 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
     }
   }
 
-  const transformTemplate = (templateCode: string, offset: number) => {
-    // Regex-based 't' attribute extraction for Templates (Vue/Astro)
-    const tagRegex = /<([a-z0-9-]+)[^>]*\s(t)\s*[^>]*>([\s\S]*?)<\/\1>/gi
+  const transformTemplate = (templateCode: string, offset: number, syntax: 'vue' | 'astro') => {
+    // Regex-based 't' or 'i18n' attribute extraction for Templates (Vue/Astro)
+    const tagRegex = /<([a-z0-9-]+)[^>]*\s(t|i18n)\s*[^>]*>([\s\S]*?)<\/\1>/gi
     let match
     while ((match = tagRegex.exec(templateCode)) !== null) {
       const [fullMatch, tagName, tAttr, content] = match
@@ -278,14 +278,16 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
         EXTRACTED_KEYS.set(hash, normalizedContent)
         const escaped = escapeForTemplateLiteral(normalizedContent)
         
-        // Substitute content with framework-agnostic double braces
-        const replacementContent = `{{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }}`
+        // Use single braces for Astro, double for Vue
+        const replacementContent = syntax === 'astro' 
+          ? `{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }`
+          : `{{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }}`
         
         const start = offset + match.index + fullMatch.indexOf(content)
         const end = start + content.length
         s.overwrite(start, end, replacementContent)
 
-        // Remove 't' attribute
+        // Remove 't' or 'i18n' attribute
         const tStart = offset + match.index + fullMatch.indexOf(` ${tAttr}`)
         const tEnd = tStart + tAttr.length + 1
         s.remove(tStart, tEnd)
@@ -302,7 +304,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
 
     const templateMatch = code.match(/<template>([\s\S]*?)<\/template>/)
     if (templateMatch) {
-      transformTemplate(templateMatch[1], templateMatch.index! + templateMatch[0].indexOf(templateMatch[1]))
+      transformTemplate(templateMatch[1], templateMatch.index! + templateMatch[0].indexOf(templateMatch[1]), 'vue')
     }
   } else if (id.endsWith('.astro')) {
     // Astro Frontmatter: --- content ---
@@ -311,10 +313,10 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
       transformJS(astroMatch[1], astroMatch.index! + 3) // +3 for '---'
       
       const templateCode = code.slice(astroMatch[0].length)
-      transformTemplate(templateCode, astroMatch[0].length)
+      transformTemplate(templateCode, astroMatch[0].length, 'astro')
     } else {
       // No frontmatter, treat whole thing as template
-      transformTemplate(code, 0)
+      transformTemplate(code, 0, 'astro')
     }
   } else {
     transformJS(code, 0)

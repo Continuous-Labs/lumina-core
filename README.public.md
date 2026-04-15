@@ -13,9 +13,11 @@ Traditional i18n processes are manual and tedious. Lumina transforms this into a
 ## 🛠️ How it works (Developer Experience)
 
 ### 1. Mark your UI
-Just add a `t` attribute to any HTML/JSX element:
+Just add a `t` or `i18n` attribute to any HTML/JSX element:
 ```jsx
 <button t>Create new account</button>
+<!-- or -->
+<button i18n>Create new account</button>
 ```
 
 ### 2. Mark your logic

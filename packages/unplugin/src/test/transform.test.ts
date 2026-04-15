@@ -11,6 +11,14 @@ describe('Lumina Unplugin Transformation', () => {
     expect(result?.code).not.toContain(' t>')
   })
 
+  it('should transform React JSX i18n-attributes', () => {
+    const input = 'export const App = () => <div i18n>Localized</div>'
+    const result = transformLuminaCode(input, 'App.tsx')
+    
+    expect(result?.code).toContain('globalThis.__lumina?.getText')
+    expect(result?.code).not.toContain(' i18n>')
+  })
+
   it('should transform Vue template t-attributes', () => {
     const input = `
 <template>
@@ -24,15 +32,28 @@ describe('Lumina Unplugin Transformation', () => {
     expect(result?.code).not.toContain(' t>')
   })
 
-  it('should transform Astro templates', () => {
+  it('should transform Vue template i18n-attributes', () => {
+    const input = `
+<template>
+  <p i18n>Hello World</p>
+</template>
+`
+    const result = transformLuminaCode(input, 'App.vue')
+    
+    expect(result?.code).toContain('{{ (globalThis.__lumina?.getText')
+    expect(result?.code).not.toContain(' i18n>')
+  })
+
+  it('should transform Astro templates with single braces', () => {
     const input = `---
 const name = "Lumina"
 ---
 <h1 t>Welcome to {name}</h1>`
     const result = transformLuminaCode(input, 'index.astro')
     
-    expect(result?.code).toContain('{{ (globalThis.__lumina?.getText')
+    expect(result?.code).toContain('{ (globalThis.__lumina?.getText')
     expect(result?.code).toContain('Welcome to {expr}')
+    expect(result?.code).not.toContain('{{')
   })
 
   it('should inject virtual config into initLumina calls', () => {

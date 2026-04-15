@@ -75,12 +75,18 @@ export class LuminaClient {
     this._fallbackLocale = options.fallbackLocale || options.defaultLocale || 'en'
   }
 
+  /**
+   * Alias for locale based on Architecture Doc Section 3 
+   */
+  get setLanguage() { return this.locale }
+  set setLanguage(val: string) { this.locale = val }
+
   get locale() {
     return this._locale.value
   }
 
-  set locale(value: string) {
-    this._locale.value = value
+  set locale(val: string) {
+    this._locale.value = val
   }
 
   /**

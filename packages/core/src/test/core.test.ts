@@ -60,6 +60,15 @@ describe('Lumina Core', () => {
       expect(client.getText('id_1', 'Default')).toBe('Hola')
     })
 
+    it('should support setLanguage alias as getter/setter', () => {
+      const client = new LuminaClient({ locale: 'en' })
+      expect(client.setLanguage).toBe('en')
+      
+      client.setLanguage = 'es'
+      expect(client.locale).toBe('es')
+      expect(client.setLanguage).toBe('es')
+    })
+
     it('should fallback to default locale if translation is missing', () => {
       const client = new LuminaClient({
         locale: 'fr',
