@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina-react",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "React adapter for Lumina i18n.",
   "type": "module",
   "main": "./dist/index.mjs",
@@ -26,5 +26,6 @@
     "build": "unbuild",
     "dev": "unbuild --stub",
     "test": "vitest --environment happy-dom run"
-  }
+  },
+  "license": "MIT"
 }

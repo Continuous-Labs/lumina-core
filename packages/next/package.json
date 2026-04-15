@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina-next",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Lumina i18n adapter for Next.js.",
   "type": "module",
   "exports": {
@@ -32,5 +32,6 @@
     "build": "unbuild",
     "dev": "unbuild --stub",
     "test": "vitest --environment happy-dom run"
-  }
+  },
+  "license": "MIT"
 }

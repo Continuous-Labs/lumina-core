@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Core engine for Lumina i18n: hashing and signals-based state.",
   "type": "module",
   "main": "./dist/index.js",
@@ -16,5 +16,6 @@
   },
   "devDependencies": {
     "typescript": "^5.0.0"
-  }
+  },
+  "license": "MIT"
 }
