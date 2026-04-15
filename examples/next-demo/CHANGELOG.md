@@ -1,5 +1,14 @@
 # next-demo
 
+## 1.0.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @continuouslabs/lumina@1.0.8
+  - @continuouslabs/lumina-next@1.0.8
+  - @continuouslabs/lumina-react@1.0.8
+
 ## 1.0.7
 
 ### Patch Changes

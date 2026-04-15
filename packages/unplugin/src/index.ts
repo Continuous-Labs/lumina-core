@@ -47,7 +47,7 @@ export const luminaUnplugin = createUnplugin((options: LuminaPluginOptions = {})
   const locales = options.locales || []
 
   return {
-    name: 'unplugin-lumina-i18n',
+    name: 'unplugin-lumina',
     enforce: 'pre', // Run before other plugins/loaders to see original JSX/Astro syntax
 
     /**

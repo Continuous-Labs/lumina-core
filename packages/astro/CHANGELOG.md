@@ -1,5 +1,13 @@
 # @continuouslabs/lumina-astro
 
+## 1.0.8
+
+### Patch Changes
+
+- Final cleanup of documentation and internal identifiers to reflect the CLI package rename.
+- Updated dependencies
+  - @continuouslabs/lumina@1.0.8
+
 ## 1.0.7
 
 ### Patch Changes

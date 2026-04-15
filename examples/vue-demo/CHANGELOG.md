@@ -1,5 +1,13 @@
 # lumina-vue-demo
 
+## 1.0.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @continuouslabs/lumina@1.0.8
+  - @continuouslabs/lumina-vue@1.0.8
+
 ## 1.0.7
 
 ### Patch Changes
