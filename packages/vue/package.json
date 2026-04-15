@@ -13,12 +13,16 @@
     "@continuouslabs/lumina": "workspace:*"
   },
   "devDependencies": {
+    "@testing-library/vue": "^8.1.0",
+    "happy-dom": "^20.9.0",
     "typescript": "^5.0.0",
     "unbuild": "^2.0.0",
+    "vitest": "^4.1.4",
     "vue": "^3.3.0"
   },
   "scripts": {
     "build": "unbuild",
-    "dev": "unbuild --stub"
+    "dev": "unbuild --stub",
+    "test": "vitest --environment happy-dom run"
   }
 }

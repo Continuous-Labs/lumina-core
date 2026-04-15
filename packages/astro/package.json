@@ -14,12 +14,15 @@
     "astro": ">=2.0.0"
   },
   "devDependencies": {
+    "astro": "^3.0.0",
+    "happy-dom": "^20.9.0",
     "typescript": "^5.0.0",
     "unbuild": "^2.0.0",
-    "astro": "^3.0.0"
+    "vitest": "^4.1.4"
   },
   "scripts": {
     "build": "unbuild",
-    "dev": "unbuild --stub"
+    "dev": "unbuild --stub",
+    "test": "vitest run"
   }
 }

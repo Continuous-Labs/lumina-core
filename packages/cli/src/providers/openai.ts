@@ -1,5 +1,11 @@
 import { TranslationProvider, ProviderOptions } from './base.js';
 
+/**
+ * OpenAI Translation Provider
+ * 
+ * Supports standard GPT-3.5 and GPT-4 models. 
+ * Reliable and widely used for high-fidelity translations.
+ */
 export class OpenAIProvider implements TranslationProvider {
   name = 'openai';
   private apiKey: string;
@@ -7,7 +13,7 @@ export class OpenAIProvider implements TranslationProvider {
 
   constructor(options: ProviderOptions) {
     this.apiKey = options.apiKey || '';
-    this.model = options.model || 'gpt-4o-mini';
+    this.model = options.model || 'gpt-3.5-turbo';
   }
 
   async translate(texts: string[], targetLocale: string, sourceLocale: string): Promise<string[]> {

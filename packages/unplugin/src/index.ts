@@ -6,29 +6,55 @@ import path from 'path'
 import { parse } from '@babel/parser'
 import * as _traverse from '@babel/traverse'
 
+/**
+ * Lumina Plugin Options
+ */
 export interface LuminaPluginOptions {
+  /** Directory where extracted keys and stub locales will be saved. Defaults to .lumina/locales */
   outputDir?: string
+  /** List of locales to initialize (e.g., ['en', 'es']). */
   locales?: string[]
 }
 
+/** 
+ * Persistent map to track extracted keys during the build process.
+ * This ensures we only write unique keys to the original.json file.
+ */
 const EXTRACTED_KEYS = new Map<string, string>()
 
+/**
+ * Tags that should NEVER be translated.
+ */
 const NON_TRANSLATABLE_TAGS = new Set(['code', 'pre', 'script', 'style', 'textarea'])
 
+/**
+ * Ensures strings are safe to be placed inside a backtick template literal.
+ */
 function escapeForTemplateLiteral(str: string): string {
   return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
 }
 
+/**
+ * The core Lumina Unplugin.
+ * 
+ * This is the "brain" of the compile-time i18n system. It handles:
+ * 1. Automatic extraction of text from 't' attributes or t() function calls.
+ * 2. Rewriting source code to use reactive runtime translations.
+ * 3. Managing virtual modules for Zero-Config initialization.
+ */
 export const luminaUnplugin = createUnplugin((options: LuminaPluginOptions = {}) => {
   const outputDir = options.outputDir || path.join(process.cwd(), '.lumina/locales')
   const locales = options.locales || []
 
   return {
     name: 'unplugin-lumina-i18n',
-    enforce: 'pre',
+    enforce: 'pre', // Run before other plugins/loaders to see original JSX/Astro syntax
 
+    /**
+     * Build initialization hook.
+     * Checks for lumina.config.json and prepares the output directory.
+     */
     buildStart() {
-      // Load lumina.config.json if it exists
       const configPath = path.join(process.cwd(), 'lumina.config.json')
       let config: any = {}
       if (fs.existsSync(configPath)) {
@@ -40,10 +66,12 @@ export const luminaUnplugin = createUnplugin((options: LuminaPluginOptions = {})
         }
       }
 
+      // Ensure the .lumina/locales directory exists
       if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true })
       }
       
+      // Create empty stubs for defined locales if they don't exist
       const targetLocales = config.locales || locales
       for (const locale of targetLocales) {
         const localePath = path.join(outputDir, locale + '.json')
@@ -54,15 +82,23 @@ export const luminaUnplugin = createUnplugin((options: LuminaPluginOptions = {})
       }
     },
 
+    /**
+     * Virtual Module Resolution.
+     * Handles the magic '@lumina/config' import used for Zero-Config.
+     */
     resolveId(id) {
       if (id === '@lumina/config') {
-        // Use a pseudo-absolute path that works across all bundlers.
-        // Webpack follows this path, and we intercept it in the load hook.
+        // We route to a virtual file in the .lumina directory
         return path.resolve(process.cwd(), '.lumina/virtual-config.mjs')
       }
       return null
     },
 
+    /**
+     * Virtual Module Loading.
+     * Generates a dynamic JS module that embeds all project translations.
+     * This allows runtime adapters to import a single object with everything they need.
+     */
     load(id) {
       if (id === '@lumina/config' || id.includes('.lumina/virtual-config.mjs')) {
         const configPath = path.join(process.cwd(), 'lumina.config.json')
@@ -70,15 +106,12 @@ export const luminaUnplugin = createUnplugin((options: LuminaPluginOptions = {})
           ? JSON.parse(fs.readFileSync(configPath, 'utf-8'))
           : { defaultLocale: 'en', locales: ['en'] }
 
-        const outputRelative = path.relative(process.cwd(), path.join(process.cwd(), '.lumina/locales'))
-        
         let imports = ''
         let messages = '{\n'
         
+        // Generate static imports for each JSON dictionary
         config.locales.forEach((locale: string) => {
           const varName = `locale_${locale.replace('-', '_')}`
-          // We use public path or relative path depending on the bundler, 
-          // but for virtual modules, absolute path is often safest or relative to project root.
           const fullPath = path.join(process.cwd(), '.lumina/locales', `${locale}.json`)
           imports += `import ${varName} from '${fullPath}'\n`
           messages += `  '${locale}': ${varName},\n`
@@ -99,10 +132,18 @@ export default config
       return null
     },
 
+    /**
+     * The main transformation entry point.
+     * Dispatches the source code to the framework-aware transformation engine.
+     */
     transform(code: string, id: string) {
       return transformLuminaCode(code, id, options)
     },
 
+    /**
+     * Build end hook.
+     * Flushes all extracted keys to 'original.json' for the AI translation CLI.
+     */
     buildEnd() {
       if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true })
@@ -124,6 +165,7 @@ export default config
   }
 })
 
+// Bundler-specific plugin exports
 export const vitePlugin = luminaUnplugin.vite
 export const webpackPlugin = luminaUnplugin.webpack
 export const rollupPlugin = luminaUnplugin.rollup
@@ -131,14 +173,30 @@ export const esbuildPlugin = luminaUnplugin.esbuild
 
 /**
  * Main transformation engine for Lumina i18n.
- * Extracted into a standalone function for testing purposes.
+ * 
+ * This function parses source code and performs surgical mutations 
+ * using Babel for AST analysis and MagicString for non-destructive updates.
+ * 
+ * It supports:
+ * - React (JSX/TSX)
+ * - Vue (.vue)
+ * - Astro (.astro)
+ * - Vanilla JS/TS
+ * 
+ * @param code The source code of the file.
+ * @param id The absolute path of the file.
+ * @param options Plugin options.
  */
 export function transformLuminaCode(code: string, id: string, options: LuminaPluginOptions = {}) {
+  // Only process standard web formats
   if (!id.match(/\.(?:[jt]sx?|vue|astro)$/) || id.includes('node_modules')) return null
 
   const s = new MagicString(code)
   let hasChanged = false
 
+  /**
+   * Helper to transform standard JavaScript/TypeScript code using Babel.
+   */
   const transformJS = (jsCode: string, offset = 0) => {
     try {
       const ast = parse(jsCode, {
@@ -151,11 +209,15 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
       let needsVirtualConfig = false
 
       traverseFn(ast, {
+        /**
+         * Handle JSX elements.
+         * Looks for <Tag t> or <Tag i18n> and wraps their content.
+         */
         JSXOpeningElement(pathNode: any) {
           const node = pathNode.node
           const tagName = node.name.name || ''
 
-          // 1. Magic Provider Injection
+          // 1. Magic Provider Injection: Automatically passing config to LuminaProvider
           if (tagName === 'LuminaProvider') {
             const hasOptions = node.attributes.some(
               (attr: any) => attr.type === 'JSXAttribute' && attr.name.name === 'options'
@@ -168,9 +230,10 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
             }
           }
 
-          // 2. Attribute 't' Extraction
+          // Ignore tags like <code> or <script>
           if (NON_TRANSLATABLE_TAGS.has(tagName)) return
 
+          // 2. Attribute 't' or 'i18n' Extraction
           const tAttrIndex = node.attributes.findIndex(
             (attr: any) => attr.type === 'JSXAttribute' && (attr.name.name === 't' || attr.name.name === 'i18n')
           )
@@ -180,10 +243,12 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
             const parentElement = pathNode.parent
             let extractedText = ''
 
+            // Combine all static parts of the children into a single translatable string
             parentElement.children.forEach((child: any) => {
               if (child.type === 'JSXText') {
                 extractedText += child.value
               } else if (child.type === 'JSXExpressionContainer') {
+                // We mark expressions with a universal placeholder for stable hashing
                 extractedText += '{expr}'
               }
             })
@@ -195,6 +260,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
               EXTRACTED_KEYS.set(hash, cleanContent)
 
               const escaped = escapeForTemplateLiteral(cleanContent)
+              // Rewrite the content to call the runtime client
               const replacement = '{(globalThis.__lumina?.getText(' + "'" + hash + "'" + ', `' + escaped + '`) ?? `' + escaped + '`)}'
 
               const contentStart = node.end + offset
@@ -202,7 +268,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
 
               s.overwrite(contentStart, contentEnd, replacement)
 
-              // Remove the 't' attribute
+              // Surgical removal of the 't' attribute to keep source clean
               let attrStart = tAttrNode.start + offset
               let attrEnd = tAttrNode.end + offset
               if (jsCode[tAttrNode.start - 1] === ' ') attrStart -= 1
@@ -212,10 +278,14 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
           }
         },
 
+        /**
+         * Handle function calls.
+         * Looks for t("Hello") or initLumina().
+         */
         CallExpression(pathNode: any) {
           const node = pathNode.node
           
-          // 3. Magic Init Injection
+          // 3. Magic Init Injection: Auto-inject config into createLumina() or initLumina()
           if (node.callee.type === 'Identifier' && (node.callee.name === 'createLumina' || node.callee.name === 'initLumina')) {
             if (node.arguments.length === 0) {
               s.appendLeft(node.end - 1 + offset, '__LUMINA_CONFIG__')
@@ -224,7 +294,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
             }
           }
 
-          // 4. Function 't()' Extraction
+          // 4. Function 't()' Extraction: Simple translation hook
           if (node.callee.type === 'Identifier' && node.callee.name === 't') {
             const arg = node.arguments[0]
             if (arg && (arg.type === 'StringLiteral' || arg.type === 'TemplateLiteral')) {
@@ -243,6 +313,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
         }
       })
 
+      // If we used the magic __LUMINA_CONFIG__, we need to import it at the top of the file
       if (needsVirtualConfig) {
         const importStmt = "import __LUMINA_CONFIG__ from '@lumina/config'\n"
         
@@ -260,15 +331,18 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
     }
   }
 
+  /**
+   * Helper to transform Template-based code (Vue <template> or Astro HTML).
+   * Uses Regex for fast and surgical attribute extraction in markup.
+   */
   const transformTemplate = (templateCode: string, offset: number, syntax: 'vue' | 'astro') => {
-    // Regex-based 't' or 'i18n' attribute extraction for Templates (Vue/Astro)
+    // Looks for <tag t>content</tag> or <tag i18n>content</tag>
     const tagRegex = /<([a-z0-9-]+)[^>]*\s(t|i18n)\s*[^>]*>([\s\S]*?)<\/\1>/gi
     let match
     while ((match = tagRegex.exec(templateCode)) !== null) {
       const [fullMatch, tagName, tAttr, content] = match
       
-      // Normalize expressions to {expr} to match JSX behavior
-      // This handles {{vue}} and {astro} styles
+      // Normalize dynamic expressions inside templates to {expr} for consistent hashing
       const normalizedContent = content.trim()
         .replace(/\{\{[\s\S]*?\}\}/g, '{expr}')
         .replace(/\{[^\}]+\}/g, (m) => m === '{expr}' ? m : '{expr}')
@@ -278,7 +352,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
         EXTRACTED_KEYS.set(hash, normalizedContent)
         const escaped = escapeForTemplateLiteral(normalizedContent)
         
-        // Use single braces for Astro, double for Vue
+        // Use single braces {} for Astro, double braces {{}} for Vue
         const replacementContent = syntax === 'astro' 
           ? `{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }`
           : `{{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }}`
@@ -287,7 +361,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
         const end = start + content.length
         s.overwrite(start, end, replacementContent)
 
-        // Remove 't' or 'i18n' attribute
+        // Remove the 't' indicator attribute
         const tStart = offset + match.index + fullMatch.indexOf(` ${tAttr}`)
         const tEnd = tStart + tAttr.length + 1
         s.remove(tStart, tEnd)
@@ -296,7 +370,9 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
     }
   }
 
+  // Framework-specific pre-processing
   if (id.endsWith('.vue')) {
+    // Process Vue SFC by splitting scripts and templates
     const scriptMatch = code.match(/<script[^>]*>([\s\S]*?)<\/script>/)
     if (scriptMatch) {
       transformJS(scriptMatch[1], scriptMatch.index! + scriptMatch[0].indexOf(scriptMatch[1]))
@@ -307,18 +383,19 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
       transformTemplate(templateMatch[1], templateMatch.index! + templateMatch[0].indexOf(templateMatch[1]), 'vue')
     }
   } else if (id.endsWith('.astro')) {
-    // Astro Frontmatter: --- content ---
+    // Process Astro files by handling the frontmatter (JS) and body (HTML)
     const astroMatch = code.match(/^---([\s\S]*?)---/)
     if (astroMatch) {
-      transformJS(astroMatch[1], astroMatch.index! + 3) // +3 for '---'
+      transformJS(astroMatch[1], astroMatch.index! + 3) // +3 for leading '---'
       
       const templateCode = code.slice(astroMatch[0].length)
       transformTemplate(templateCode, astroMatch[0].length, 'astro')
     } else {
-      // No frontmatter, treat whole thing as template
+      // Pure HTML style Astro file
       transformTemplate(code, 0, 'astro')
     }
   } else {
+    // Standard JS/TS file
     transformJS(code, 0)
   }
 

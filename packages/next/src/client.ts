@@ -1,26 +1,9 @@
+/**
+ * Lumina Next.js Client Entry Point
+ * 
+ * Specifically designed for 'use client' components in Next.js App Router.
+ * It leverages the React adapter to ensure hydration consistency.
+ */
 'use client'
 
-import { useState, useEffect } from 'react'
-import { initLumina, lumina } from '@continuouslabs/lumina'
-
-export { initLumina, lumina }
-export * from '@continuouslabs/lumina'
-
-export function useLumina() {
-  const [locale, setLocale] = useState(lumina?.locale || 'en')
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-    if (!lumina) return
-    
-    // Subscribe to locale changes
-    const unsubscribe = lumina.subscribe(() => {
-      setLocale(lumina.locale)
-    })
-    
-    return () => unsubscribe?.()
-  }, [])
-
-  return { locale, lumina, mounted }
-}
+export * from '@continuouslabs/lumina-react'

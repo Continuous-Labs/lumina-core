@@ -14,12 +14,17 @@
     "@continuouslabs/lumina": "workspace:*"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19",
+    "happy-dom": "^20.9.0",
     "typescript": "^5.0.0",
     "unbuild": "^2.0.0",
-    "@types/react": "^19"
+    "vitest": "^4.1.4"
   },
   "scripts": {
     "build": "unbuild",
-    "dev": "unbuild --stub"
+    "dev": "unbuild --stub",
+    "test": "vitest --environment happy-dom run"
   }
 }

@@ -1,5 +1,11 @@
 import { TranslationProvider, ProviderOptions } from './base.js';
 
+/**
+ * Ollama Translation Provider
+ * 
+ * Perfect for teams that want to keep their translation pipeline entirely local 
+ * or private. It interacts with a local Ollama instance (e.g., running Llama 3).
+ */
 export class OllamaProvider implements TranslationProvider {
   name = 'ollama';
   private endpoint: string;

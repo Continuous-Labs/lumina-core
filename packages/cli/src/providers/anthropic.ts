@@ -1,5 +1,11 @@
 import { TranslationProvider, ProviderOptions } from './base.js';
 
+/**
+ * Anthropic Translation Provider
+ * 
+ * Uses Claude (e.g., Claude 3 Haiku or Claude 3.5 Sonnet). 
+ * Known for its exceptional reasoning and context-aware translations.
+ */
 export class AnthropicProvider implements TranslationProvider {
   name = 'anthropic';
   private apiKey: string;
