@@ -49,8 +49,8 @@ const render = () => {
 }
 
 // Global injection so compiled literals inside render() find it
-if (typeof window !== 'undefined') {
-  (window as any).__lumina = client
+if (typeof globalThis !== 'undefined') {
+  (globalThis as any).__lumina = client
 }
 
 render()

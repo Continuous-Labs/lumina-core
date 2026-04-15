@@ -4,7 +4,7 @@ import { hash64 } from '@continuouslabs/lumina'
 import fs from 'fs'
 import path from 'path'
 import { parse } from '@babel/parser'
-import * as _traverse from '@babel/traverse'
+import _traverse from '@babel/traverse'
 
 /**
  * Lumina Plugin Options
@@ -60,9 +60,9 @@ export const luminaUnplugin = createUnplugin((options: LuminaPluginOptions = {})
       if (fs.existsSync(configPath)) {
         try {
           config = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
-          console.log('[Lumina] Loaded project configuration.')
+          console.log(`[Lumina] Loaded project configuration from ${configPath}`)
         } catch (e) {
-          console.warn('[Lumina] Failed to parse lumina.config.json')
+          console.warn(`[Lumina] Failed to parse lumina.config.json at ${configPath}`)
         }
       }
 
@@ -83,60 +83,14 @@ export const luminaUnplugin = createUnplugin((options: LuminaPluginOptions = {})
     },
 
     /**
-     * Virtual Module Resolution.
-     * Handles the magic '@lumina/config' import used for Zero-Config.
-     */
-    resolveId(id) {
-      if (id === '@lumina/config') {
-        // We route to a virtual file in the .lumina directory
-        return path.resolve(process.cwd(), '.lumina/virtual-config.mjs')
-      }
-      return null
-    },
-
-    /**
-     * Virtual Module Loading.
-     * Generates a dynamic JS module that embeds all project translations.
-     * This allows runtime adapters to import a single object with everything they need.
-     */
-    load(id) {
-      if (id === '@lumina/config' || id.includes('.lumina/virtual-config.mjs')) {
-        const configPath = path.join(process.cwd(), 'lumina.config.json')
-        const config = fs.existsSync(configPath) 
-          ? JSON.parse(fs.readFileSync(configPath, 'utf-8'))
-          : { defaultLocale: 'en', locales: ['en'] }
-
-        let imports = ''
-        let messages = '{\n'
-        
-        // Generate static imports for each JSON dictionary
-        config.locales.forEach((locale: string) => {
-          const varName = `locale_${locale.replace('-', '_')}`
-          const fullPath = path.join(process.cwd(), '.lumina/locales', `${locale}.json`)
-          imports += `import ${varName} from '${fullPath}'\n`
-          messages += `  '${locale}': ${varName},\n`
-        })
-        messages += '}'
-
-        return `
-${imports}
-export const config = {
-  locale: '${config.defaultLocale || 'en'}',
-  defaultLocale: '${config.defaultLocale || 'en'}',
-  locales: ${JSON.stringify(config.locales)},
-  messages: ${messages}
-}
-export default config
-`
-      }
-      return null
-    },
-
-    /**
      * The main transformation entry point.
      * Dispatches the source code to the framework-aware transformation engine.
      */
     transform(code: string, id: string) {
+      if (!id) return null
+      if (id.includes('.vue') || id.includes('.astro') || id.includes('.tsx') || id.includes('.jsx')) {
+        // console.log(`[Lumina] Transforming: ${id}`)
+      }
       return transformLuminaCode(code, id, options)
     },
 
@@ -189,7 +143,8 @@ export const esbuildPlugin = luminaUnplugin.esbuild
  */
 export function transformLuminaCode(code: string, id: string, options: LuminaPluginOptions = {}) {
   // Only process standard web formats
-  if (!id.match(/\.(?:[jt]sx?|vue|astro)$/) || id.includes('node_modules')) return null
+  // Only process standard web formats (supports query parameters in ID, common in Webpack/Next.js)
+  if (!id.match(/\.(?:[jt]sx?|vue|astro)(?:\?.*)?$/) || id.includes('node_modules')) return null
 
   const s = new MagicString(code)
   let hasChanged = false
@@ -205,7 +160,9 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
         errorRecovery: true
       })
 
-      const traverseFn = (_traverse as any).default || _traverse
+      const traverseFn = (typeof _traverse === 'function') 
+        ? _traverse 
+        : ((_traverse as any).default?.default || (_traverse as any).default || _traverse)
       let needsVirtualConfig = false
 
       traverseFn(ast, {
@@ -244,14 +201,17 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
             let extractedText = ''
 
             // Combine all static parts of the children into a single translatable string
-            parentElement.children.forEach((child: any) => {
-              if (child.type === 'JSXText') {
-                extractedText += child.value
-              } else if (child.type === 'JSXExpressionContainer') {
-                // We mark expressions with a universal placeholder for stable hashing
-                extractedText += '{expr}'
+            const children = parentElement?.children
+            if (Array.isArray(children)) {
+              for (const child of children) {
+                if (child.type === 'JSXText') {
+                  extractedText += child.value
+                } else if (child.type === 'JSXExpressionContainer') {
+                  // We mark expressions with a universal placeholder for stable hashing
+                  extractedText += '{expr}'
+                }
               }
-            })
+            }
 
             const cleanContent = extractedText.trim()
 
@@ -310,20 +270,81 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
               }
             }
           }
+        },
+
+        /**
+         * 5. Vanilla Template Literal Extraction.
+         * Looks for HTML strings inside backticks with a 't' attribute.
+         */
+        TemplateLiteral(pathNode: any) {
+          const node = pathNode.node
+          // Only process simple template literals for now (no expressions inside markup for simplicity)
+          if (node.quasis.length === 1) {
+            const raw = node.quasis[0].value.raw
+            if (raw.includes(' t>') || raw.includes(' i18n>')) {
+              // We reuse transformTemplate logic for consistent behavior
+              // But we have to be careful about not breaking the surrounding file
+              // For vanilla JS, we just extract the keys for translation.
+              // Note: We don't perform surgery inside the template literal yet to keep it stable
+              // as vanilla JS usually doesn't have a built-in reactive DOM engine.
+              const tagRegex = /<([a-z0-9-]+)[^>]*\s(t|i18n)\s*[^>]*>([\s\S]*?)<\/\1>/gi
+              let match
+              while ((match = tagRegex.exec(raw)) !== null) {
+                const content = match[3].trim()
+                if (content) {
+                  const hash = 'id_' + hash64(content)
+                  EXTRACTED_KEYS.set(hash, content)
+                }
+              }
+            }
+          }
         }
       })
 
-      // If we used the magic __LUMINA_CONFIG__, we need to import it at the top of the file
+      // If we used the magic __LUMINA_CONFIG__, we need to define it at the top of the file
       if (needsVirtualConfig) {
-        const importStmt = "import __LUMINA_CONFIG__ from '@lumina/config'\n"
+        // Build the inlined config object
+        const configPath = path.join(process.cwd(), 'lumina.config.json')
+        let rawConfig: any = {}
+        if (fs.existsSync(configPath)) {
+          try {
+            rawConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
+          } catch (e) {
+            console.warn(`[Lumina] Error parsing config for inlining at ${id}:`, e)
+          }
+        }
+        
+        const config = {
+          defaultLocale: rawConfig.defaultLocale || 'en',
+          locales: rawConfig.locales || ['en']
+        }
+
+        let messages = '{'
+        const localeList = config.locales
+        for (let i = 0; i < localeList.length; i++) {
+          const locale = localeList[i]
+          const fullPath = path.join(process.cwd(), '.lumina/locales', `${locale}.json`)
+          const content = fs.existsSync(fullPath) ? fs.readFileSync(fullPath, 'utf-8') : '{}'
+          messages += `"${locale}": ${content}${i === localeList.length - 1 ? '' : ','}`
+        }
+        messages += '}'
+
+        const inlinedConfig = `{
+          locale: '${config.defaultLocale}',
+          defaultLocale: '${config.defaultLocale}',
+          locales: ${JSON.stringify(config.locales)},
+          messages: ${messages}
+        }`
+
+        const definitionStmt = `const __LUMINA_CONFIG__ = ${inlinedConfig};\n`
         
         let insertPos = 0
         if (ast.program.directives && ast.program.directives.length > 0) {
           const lastDirective = ast.program.directives[ast.program.directives.length - 1]
           insertPos = lastDirective.end! + offset
-          s.appendRight(insertPos, '\n' + importStmt)
+          s.appendRight(insertPos, '\n' + definitionStmt)
         } else {
-          s.prepend(importStmt)
+          s.prepend(definitionStmt)
         }
       }
     } catch (err) {

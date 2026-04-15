@@ -1,7 +1,6 @@
 {
-  "id_bf5d56543bbe5534": "Selected Locale:",
-  "id_eafbb16619bf76d2": "Hey {0}, welcome to the Vue demo. Change the language below and watch the reactivity in action.",
-  "id_3b350edb060e0bb2": "Build multilingual apps in seconds, not hours.",
   "id_f2035f07bc0beada": "Vue + Lumina",
-  "id_56f1ac355ba97e0f": "Hey {name}, welcome to the Vue demo. Change the language below and watch the reactivity in action."
+  "id_3b350edb060e0bb2": "Build multilingual apps in seconds, not hours.",
+  "id_4643dcd1817add9b": "Hey {expr}, welcome to the Vue demo. Change the language below and watch the reactivity in action.",
+  "id_bf5d56543bbe5534": "Selected Locale:"
 }

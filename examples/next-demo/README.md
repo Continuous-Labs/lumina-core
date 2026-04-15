@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lumina Next.js Demo 🏁
 
-## Getting Started
+A high-performance showcase of **Lumina i18n** for Next.js 15+ using the App Router.
 
-First, run the development server:
+## Modern i18n for Next.js
+- **App Router Support:** Works perfectly with 'use client' components in the latest Next.js versions.
+- **withLumina Wrapper:** A powerful Webpack wrapper that handles zero-config extraction without cluttering your `next.config.js`.
+- **Hybrid Rendering:** Designed to work across Client Components and SSR environments via `globalThis` singletons.
 
+## Running the demo
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup details
+Register the Lumina wrapper in `next.config.ts`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```typescript
+import { withLumina } from '@continuouslabs/lumina-next'
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+const nextConfig = {
+  // your standard next config
+}
 
-## Learn More
+export default withLumina(nextConfig, { locales: ['en', 'es'] })
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Usage in App Router
+Simply add the `t` attribute to any HTML element in your Client Components:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```tsx
+'use client'
+import { useLumina } from '@continuouslabs/lumina-react'
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+export default function Page() {
+  const { setLocale } = useLumina()
+  
+  return (
+    <div>
+      <h1 t>Lumina + Next.js</h1>
+      <button onClick={() => setLocale('es')}>Español</button>
+    </div>
+  )
+}
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Key Benefits
+- **Zero Hydration Mismatch:** Standardized state management prevents flashing content.
+- **Server-Side Compatibility:** Global singleton architecture ensures consistent state.
+- **Developer Flow:** Use standard HTML tags with the `t` attribute; forget about manual translation JS/JSON files until you are ready to translate.

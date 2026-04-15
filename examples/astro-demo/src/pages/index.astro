@@ -41,13 +41,13 @@ import '../styles/index.css';
 			const toEs = document.getElementById('to-es');
 
 			toEn?.addEventListener('click', () => {
-				window.__lumina.locale = 'en';
+				globalThis.__lumina.locale = 'en';
 				toEn.classList.remove('secondary');
 				toEs?.classList.add('secondary');
 			});
 
 			toEs?.addEventListener('click', () => {
-				window.__lumina.locale = 'es';
+				globalThis.__lumina.locale = 'es';
 				toEs.classList.remove('secondary');
 				toEn?.classList.add('secondary');
 			});

@@ -60,7 +60,7 @@ const name = "Lumina"
     const input = 'import { initLumina } from "@continuouslabs/lumina"; initLumina()'
     const result = transformLuminaCode(input, 'main.ts')
     
-    expect(result?.code).toContain('import __LUMINA_CONFIG__ from \'@lumina/config\'')
+    expect(result?.code).toContain('const __LUMINA_CONFIG__ = {')
     expect(result?.code).toContain('initLumina(__LUMINA_CONFIG__)')
   })
 
