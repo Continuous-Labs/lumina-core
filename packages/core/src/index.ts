@@ -40,6 +40,11 @@ export function createSignal<T>(initialValue: T) {
         value = newValue
         subscribers.forEach(sub => sub())
       }
+    },
+    /** Subscribe to changes externally. Returns unsubscriber. */
+    subscribe(fn: Subscriber): () => void {
+      subscribers.add(fn)
+      return () => { subscribers.delete(fn) }
     }
   }
 }
@@ -53,7 +58,8 @@ export function createEffect(fn: Subscriber) {
 // --- Lumina Client ---
 
 export interface LuminaOptions {
-  locale: string
+  locale?: string
+  defaultLocale?: string
   fallbackLocale?: string
   messages?: Record<string, Record<string, string>>
 }
@@ -63,10 +69,10 @@ export class LuminaClient {
   private _messages: Record<string, Record<string, string>> = {}
   private _fallbackLocale = 'en'
 
-  constructor(options: LuminaOptions) {
-    this._locale.value = options.locale
+  constructor(options: LuminaOptions = {}) {
+    this._locale.value = options.locale || options.defaultLocale || 'en'
     this._messages = options.messages || {}
-    this._fallbackLocale = options.fallbackLocale || 'en'
+    this._fallbackLocale = options.fallbackLocale || options.defaultLocale || 'en'
   }
 
   get locale() {
@@ -100,12 +106,20 @@ export class LuminaClient {
       this._locale.value = locale
     }
   }
+
+  /**
+   * Subscribe to locale changes. Returns an unsubscribe function.
+   * Compatible with React's useSyncExternalStore subscribe signature.
+   */
+  subscribe(callback: () => void): () => void {
+    return this._locale.subscribe(callback)
+  }
 }
 
 // Singleton for global use (to be initialized by runtime adapters)
 export let lumina: LuminaClient | null = null
 
-export const initLumina = (options: LuminaOptions) => {
+export const initLumina = (options: LuminaOptions = {}) => {
   lumina = new LuminaClient(options)
   return lumina
 }
