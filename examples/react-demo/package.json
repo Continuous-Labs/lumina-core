@@ -22,5 +22,6 @@
     "vite": "^5.0.8",
     "@continuouslabs/unplugin-lumina": "workspace:*"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Felix Jara (https://felixjara.me)"
 }

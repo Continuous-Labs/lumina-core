@@ -23,5 +23,6 @@
     "typescript": "^5.0.0",
     "unbuild": "^2.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Felix Jara (https://felixjara.me)"
 }

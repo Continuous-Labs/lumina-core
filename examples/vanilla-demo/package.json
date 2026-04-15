@@ -16,5 +16,6 @@
   "dependencies": {
     "@continuouslabs/lumina": "workspace:*"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Felix Jara (https://felixjara.me)"
 }

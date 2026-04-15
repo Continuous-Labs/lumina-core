@@ -27,5 +27,6 @@
     "typescript": "^5",
     "@continuouslabs/unplugin-lumina": "workspace:*"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Felix Jara (https://felixjara.me)"
 }

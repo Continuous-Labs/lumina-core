@@ -17,5 +17,6 @@
   "devDependencies": {
     "typescript": "^5.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Felix Jara (https://felixjara.me)"
 }

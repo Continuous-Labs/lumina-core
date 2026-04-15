@@ -34,5 +34,6 @@
     "dev": "unbuild --stub",
     "test": "vitest run"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Felix Jara (https://felixjara.me)"
 }
