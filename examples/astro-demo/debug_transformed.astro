@@ -1,0 +1,18 @@
+import {
+  render as $$render,
+  createAstro as $$createAstro,
+  createComponent as $$createComponent,
+  renderHead as $$renderHead
+} from "astro/compiler-runtime";
+import "../styles/index.css";
+const $$Astro = $$createAstro();
+const Astro = $$Astro;
+const $$Index = $$createComponent(($$result, $$props, $$slots) => {
+  const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
+  Astro2.self = $$Index;
+  return $$render`<html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>Lumina + Astro</title>${$$renderHead($$result)}</head> <body> <div id="root"> <div class="card"> <div class="badge">{__lumina_t('id_e92f43e5608af433', `Lumina + Astro`)}</div> <h1>{__lumina_t('id_75ef31b0d85130f8', `Automatic translations in Astro, without effort.`)}</h1> <p>{__lumina_t('id_e0250f6568a84738', `This page uses the Lumina compiler to extract this static text. Even in a static-first framework, you can switch languages instantly on the client side.`)}</p> <div class="controls"> <button id="to-en">English</button> <button id="to-es" class="secondary">Español</button> </div> <div style="margin-top: 2rem; opacity: 0.5; font-size: 0.9rem"> <span>{__lumina_t('id_ee13826db9063169', `Change Language`)}</span> </div> </div> </div>  </body> </html>`;
+}, "/home/felix/ContinuousLabs/projects/lumina/examples/astro-demo/src/pages/index.astro", void 0);
+export default $$Index;
+
+const $$file = "/home/felix/ContinuousLabs/projects/lumina/examples/astro-demo/src/pages/index.astro";
+const $$url = "";export { $$file as file, $$url as url };

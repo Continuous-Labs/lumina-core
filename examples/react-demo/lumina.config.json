@@ -1,0 +1,15 @@
+{
+  "project": "lumina-react-demo",
+  "locales": ["en", "es", "pt"],
+  "defaultLocale": "en",
+  "provider": "ollama",
+  "ollama": {
+    "model": "llama3.1:latest",
+    "host": "http://localhost:11434"
+  },
+  "gemini": {
+    "apiKey": "YOUR_GEMINI_API_KEY",
+    "model": "gemini-1.5-flash"
+  },
+  "outputDir": ".lumina/locales"
+}

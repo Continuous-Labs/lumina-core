@@ -1,0 +1,14 @@
+// vite.config.ts
+import { defineConfig } from "file:///home/felix/ContinuousLabs/projects/lumina/node_modules/.pnpm/vite@5.4.21_@types+node@25.6.0_lightningcss@1.32.0_terser@5.46.1/node_modules/vite/dist/node/index.js";
+import vue from "file:///home/felix/ContinuousLabs/projects/lumina/node_modules/.pnpm/@vitejs+plugin-vue@4.6.2_vite@5.4.21_@types+node@25.6.0_lightningcss@1.32.0_terser@5.46.1__vue@3.5.32_typescript@5.9.3_/node_modules/@vitejs/plugin-vue/dist/index.mjs";
+import { vitePlugin as lumina } from "file:///home/felix/ContinuousLabs/projects/lumina/packages/unplugin/dist/index.mjs";
+var vite_config_default = defineConfig({
+  plugins: [
+    vue(),
+    lumina()
+  ]
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcudHMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCIvaG9tZS9mZWxpeC9Db250aW51b3VzTGFicy9wcm9qZWN0cy9sdW1pbmEvZXhhbXBsZXMvdnVlLWRlbW9cIjtjb25zdCBfX3ZpdGVfaW5qZWN0ZWRfb3JpZ2luYWxfZmlsZW5hbWUgPSBcIi9ob21lL2ZlbGl4L0NvbnRpbnVvdXNMYWJzL3Byb2plY3RzL2x1bWluYS9leGFtcGxlcy92dWUtZGVtby92aXRlLmNvbmZpZy50c1wiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9pbXBvcnRfbWV0YV91cmwgPSBcImZpbGU6Ly8vaG9tZS9mZWxpeC9Db250aW51b3VzTGFicy9wcm9qZWN0cy9sdW1pbmEvZXhhbXBsZXMvdnVlLWRlbW8vdml0ZS5jb25maWcudHNcIjtpbXBvcnQgeyBkZWZpbmVDb25maWcgfSBmcm9tICd2aXRlJ1xuaW1wb3J0IHZ1ZSBmcm9tICdAdml0ZWpzL3BsdWdpbi12dWUnXG5pbXBvcnQgeyB2aXRlUGx1Z2luIGFzIGx1bWluYSB9IGZyb20gJ0Bjb250aW51b3VzbGFicy91bnBsdWdpbi1sdW1pbmEnXG5cbmV4cG9ydCBkZWZhdWx0IGRlZmluZUNvbmZpZyh7XG4gIHBsdWdpbnM6IFtcbiAgICB2dWUoKSxcbiAgICBsdW1pbmEoKVxuICBdLFxufSlcbiJdLAogICJtYXBwaW5ncyI6ICI7QUFBc1csU0FBUyxvQkFBb0I7QUFDblksT0FBTyxTQUFTO0FBQ2hCLFNBQVMsY0FBYyxjQUFjO0FBRXJDLElBQU8sc0JBQVEsYUFBYTtBQUFBLEVBQzFCLFNBQVM7QUFBQSxJQUNQLElBQUk7QUFBQSxJQUNKLE9BQU87QUFBQSxFQUNUO0FBQ0YsQ0FBQzsiLAogICJuYW1lcyI6IFtdCn0K

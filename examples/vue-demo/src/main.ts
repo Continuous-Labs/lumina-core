@@ -1,16 +1,10 @@
+import { createApp } from 'vue'
 import './index.css'
 import App from './App.vue'
-import lumina from '@continuouslabs/lumina-vue'
-import esMessages from '../.lumina/locales/es.json'
-
+import { createLumina } from '@continuouslabs/lumina-vue'
 const app = createApp(App)
 
 // Initialize Lumina Vue Plugin
-app.use(lumina, {
-  locale: 'en',
-  messages: {
-    es: esMessages
-  }
-})
+app.use(createLumina())
 
 app.mount('#root')

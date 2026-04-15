@@ -1,7 +1,5 @@
 import React from 'react'
 import { LuminaProvider, useLumina } from '@continuouslabs/lumina-react'
-import esMessages from '../.lumina/locales/es.json'
-
 /**
  * Lumina Demo Application
  * This showcase demonstrates zero-config i18n with premium UI.
@@ -41,14 +39,7 @@ function Dashboard() {
 
 function App() {
   return (
-    <LuminaProvider 
-      options={{ 
-        locale: 'en',
-        messages: {
-          es: esMessages
-        }
-      }}
-    >
+    <LuminaProvider>
       <Dashboard />
     </LuminaProvider>
   )
