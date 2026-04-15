@@ -1,24 +1,22 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { LuminaClient, initLumina, createEffect, LuminaOptions } from '@continuouslabs/lumina'
+'use client'
+
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
+import { LuminaClient, initLumina, LuminaOptions } from '@continuouslabs/lumina'
 
 const LuminaContext = createContext<LuminaClient | null>(null)
 
-export interface LuminaProviderProps extends LuminaOptions {
+export interface LuminaProviderProps {
+  options?: LuminaOptions
   children: ReactNode
 }
 
-/**
- * LuminaProvider initializes the global client and ensures reactivity
- * within the React component tree.
- */
-export const LuminaProvider: React.FC<LuminaProviderProps> = ({ children, ...options }) => {
+export const LuminaProvider: React.FC<LuminaProviderProps> = ({ children, options }) => {
   const [client] = useState(() => {
-    const instance = initLumina(options)
-    // Automatic global injection for Zero Config compiler support
-    if (typeof window !== 'undefined') {
-      (window as any).__lumina = instance
+    const c = initLumina(options || { locale: 'en', defaultLocale: 'en', messages: {} })
+    if (typeof globalThis !== 'undefined') {
+      (globalThis as any).__lumina = c
     }
-    return instance
+    return c
   })
 
   return (
@@ -28,30 +26,46 @@ export const LuminaProvider: React.FC<LuminaProviderProps> = ({ children, ...opt
   )
 }
 
-/**
- * Hook to access the Lumina client and subscribe to locale changes.
- */
 export const useLumina = () => {
-  const client = useContext(LuminaContext)
-  if (!client) {
+  const contextClient = useContext(LuminaContext)
+
+  if (!contextClient) {
     throw new Error('useLumina must be used within a LuminaProvider')
   }
 
-  // Bridging Core Signal to React State
-  const [locale, setLocale] = useState(client.locale)
+  // Use the global singleton as canonical source, fall back to context
+  const getClient = useCallback((): LuminaClient => {
+    return ((globalThis as any).__lumina as LuminaClient) ?? contextClient
+  }, [contextClient])
+
+  // Force re-render by storing locale in state
+  const [locale, setLocaleState] = useState<string>(() => getClient().locale)
 
   useEffect(() => {
-    // createEffect from core will track dependencies and trigger this callback
-    createEffect(() => {
-      setLocale(client.locale)
+    const client = getClient()
+
+    // Sync on mount in case locale changed between render and effect
+    setLocaleState(client.locale)
+
+    // Subscribe to future signal changes
+    const unsubscribe = client.subscribe(() => {
+      setLocaleState(client.locale)
     })
-  }, [client])
+
+    return unsubscribe
+  }, [getClient])
+
+  const setLocale = useCallback((newLocale: string) => {
+    const client = getClient()
+    // Update the signal (fires subscriber → setLocaleState)
+    client.locale = newLocale
+    // Also update state directly for immediate synchronous feedback
+    setLocaleState(newLocale)
+  }, [getClient])
 
   return {
-    client,
+    client: getClient(),
     locale,
-    setLocale: (newLocale: string) => {
-      client.locale = newLocale
-    }
+    setLocale,
   }
 }
