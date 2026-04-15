@@ -1,5 +1,15 @@
 # @continuouslabs/lumina-next
 
+## 1.0.6
+
+### Patch Changes
+
+- Triggering version bump to test the new release workflow.
+- Updated dependencies
+  - @continuouslabs/lumina@1.0.6
+  - @continuouslabs/lumina-react@1.0.6
+  - @continuouslabs/unplugin-lumina@1.0.6
+
 ## 1.0.5
 
 ### Patch Changes

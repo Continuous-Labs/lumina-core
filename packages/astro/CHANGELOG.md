@@ -1,5 +1,13 @@
 # @continuouslabs/lumina-astro
 
+## 1.0.6
+
+### Patch Changes
+
+- Triggering version bump to test the new release workflow.
+- Updated dependencies
+  - @continuouslabs/lumina@1.0.6
+
 ## 1.0.5
 
 ### Patch Changes
