@@ -36,6 +36,7 @@ export default defineConfig({
 ```
 
 ## Key Benefits
-- **Zero Manual Mappings:** Stop managing huge translation keys lists.
-- **Native Reactivity:** Integrated with Vue's internal reactivity system.
+- **Zero-Config Extraction:** No manual key mapping. The engine extracts text from templates automatically.
+- **Browser Auto-Detection:** Uses browser language to initialize the app locale automatically.
+- **Signals-Based Reactivity:** Zero-overhead language switching integrated with Vue's reactivity system.
 - **Obsidian Liquid Branding:** Modern dark-mode experience out of the box.

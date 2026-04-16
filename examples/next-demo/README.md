@@ -3,7 +3,9 @@
 A high-performance showcase of **Lumina i18n** for Next.js 15+ using the App Router.
 
 ## Modern i18n for Next.js
-- **App Router Support:** Works perfectly with 'use client' components in the latest Next.js versions.
+- **App Router Integration:** Deeply integrated with Next.js App Router and server components.
+- **Automated Localization:** Zero-config extraction and browser language auto-detection.
+- **Optimized Bundling:** Seamless integration with Next.js build process.
 - **withLumina Wrapper:** A powerful Webpack wrapper that handles zero-config extraction without cluttering your `next.config.js`.
 - **Hybrid Rendering:** Designed to work across Client Components and SSR environments via `globalThis` singletons.
 

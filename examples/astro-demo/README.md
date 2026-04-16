@@ -26,5 +26,6 @@ The `@continuouslabs/unplugin-lumina` compiler is automatically used by the inte
 
 ## Key Features
 - **Deterministic Hashing:** Persistent IDs based on content, avoiding manual mapping.
-- **SSR Ready:** Optimized for hybrid and static Astro deployments.
-- **Obsidian Liquid Aesthetics:** Minimalist and premium design.
+- **Hybrid i18n:** Handles both server-rendered HTML and client-side reactive components.
+- **Browser Auto-Detection:** Automatically synchronizes the UI with the user's browser language.
+- **Isomorphic Core:** Uses the same hashing engine on the server and client.

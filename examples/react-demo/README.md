@@ -4,6 +4,7 @@ This is a high-fidelity showcase of **Lumina i18n** integrated with React and Vi
 
 ## Key Features
 - **Zero-Config Extraction:** Notice the `t` attribute in `App.tsx`. The compiler automatically detects these and generates persistent IDs based on content.
+- **Browser Language Auto-Detection:** Automatically synchronizes the UI with the user's browser language on first load.
 - **Signals-Based Reactivity:** The UI updates instantly when calling `setLocale` without a full component re-render, leveraging Lumina's reactive core.
 - **Premium UI:** A modern dark-mode dashboard reflecting the **Obsidian Liquid** design system.
 

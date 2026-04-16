@@ -3,6 +3,9 @@
 A professional showcase of **Lumina i18n** for pure Javascript/Typescript environments.
 
 ## The Simplest i18n Solution
+- **Framework Agnostic:** Pure JavaScript logic that works anywhere.
+- **Universal Init:** Automatic initialization with browser language detection.
+- **Ultra-Lightweight:** Less than 2KB of runtime code.
 - **Zero-Dependency Core:** Only relies on the ultra-lightweight `@continuouslabs/lumina` runtime.
 - **Zero-Config Extraction:** Even in vanilla JS, the Lumina compiler detects `t` attributes in template literals and extracts them automatically.
 - **Universal Singletons:** Uses `globalThis.__lumina` to provide a consistent state across different vanilla modules.

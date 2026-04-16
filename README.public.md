@@ -101,6 +101,7 @@ Lumina uses a single configuration file to sync the CLI and the Build Plugin. Us
 ```json
 {
   "defaultLocale": "en",
+  "autoDetect": true,
   "locales": ["en", "es", "fr"],
   "outputDir": "./.lumina/locales",
   "provider": "gemini",
@@ -113,6 +114,7 @@ Lumina uses a single configuration file to sync the CLI and the Build Plugin. Us
 
 ### Options Reference:
 - **`defaultLocale`**: The language you write your code in.
+- **`autoDetect`**: If `true`, the browser language is automatically used on init.
 - **`locales`**: Array of target languages for translation.
 - **`outputDir`**: Where the JSON dictionaries will be stored.
 - **`provider`**: AI engine to use (`openai`, `anthropic`, `gemini`, or `ollama`).
