@@ -2,6 +2,7 @@
   "project": "lumina-astro-demo",
   "locales": ["en", "es", "fr"],
   "defaultLocale": "en",
+  "autoDetect": true,
   "provider": "ollama",
   "ollama": {
     "model": "llama3.1:latest",

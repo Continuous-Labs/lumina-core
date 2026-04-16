@@ -316,7 +316,8 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
         
         const config = {
           defaultLocale: rawConfig.defaultLocale || 'en',
-          locales: rawConfig.locales || ['en']
+          locales: rawConfig.locales || ['en'],
+          autoDetect: !!rawConfig.autoDetect
         }
 
         let messages = '{'
@@ -333,6 +334,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
           locale: '${config.defaultLocale}',
           defaultLocale: '${config.defaultLocale}',
           locales: ${JSON.stringify(config.locales)},
+          autoDetect: ${config.autoDetect},
           messages: ${messages}
         }`
 

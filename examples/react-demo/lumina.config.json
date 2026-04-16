@@ -2,6 +2,7 @@
   "project": "lumina-react-demo",
   "locales": ["en", "es", "pt"],
   "defaultLocale": "en",
+  "autoDetect": true,
   "provider": "ollama",
   "ollama": {
     "model": "llama3.1:latest",

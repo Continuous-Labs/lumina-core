@@ -99,6 +99,8 @@ export interface LuminaOptions {
   locale?: string
   defaultLocale?: string
   fallbackLocale?: string
+  locales?: string[]
+  autoDetect?: boolean
   messages?: Record<string, Record<string, string>>
 }
 
@@ -118,7 +120,23 @@ export class LuminaClient {
   private _fallbackLocale = 'en'
 
   constructor(options: LuminaOptions = {}) {
-    this._locale.value = options.locale || options.defaultLocale || 'en'
+    let initialLocale = options.locale || options.defaultLocale || 'en'
+
+    // Browser language auto-detection
+    if (options.autoDetect && typeof navigator !== 'undefined') {
+      const browserLangs = navigator.languages || [navigator.language]
+      const supported = options.locales || []
+      
+      for (const lang of browserLangs) {
+        const shortLang = lang.split('-')[0]
+        if (supported.includes(shortLang)) {
+          initialLocale = shortLang
+          break
+        }
+      }
+    }
+
+    this._locale.value = initialLocale
     this._messages = options.messages || {}
     this._fallbackLocale = options.fallbackLocale || options.defaultLocale || 'en'
   }
