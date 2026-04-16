@@ -5,6 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Browser Language Auto-Detection**: The core client now automatically detects the user's browser language and selects the best supported locale.
+- **Dual-Branch CI/CD Strategy**: Implemented a `develop` (integration) and `main` (stable/release) branching model.
+- **Automated Public Sync**: New `global-sync-public.yml` workflow for continuous synchronization between private and public repositories on all active branches.
+
+### Changed
+- **Maintenance Flow**: Updated documentation to restrict `main` branch updates to release cycles only.
+
+## [1.0.9] - 2026-04-15
+
+### Fixed
+- Improved technical accuracy of terminal commands in the documentation.
+
+## [1.0.8] - 2026-04-15
+
+### Changed
+- Final documentation cleanup and Polish.
+
+## [1.0.7] - 2026-04-15
+
+### Changed
+- **CLI Renaming**: Renamed the initialization package to `@continuouslabs/lumina-cli` for better ecosystem consistency.
+
+## [1.0.6] - 2026-04-15
+
+### Changed
+- Routine version maintenance.
+
+## [1.0.5] - 2026-04-15
+
+### Fixed
+- Optimized refspec usage (`HEAD:main`) for more robust public synchronization.
+
+## [1.0.4] - 2026-04-15
+
+### Fixed
+- Resolved CI synchronization errors during edge case monorepo updates.
+
+## [1.0.3] - 2026-04-15
+
+### Added
+- Automated synchronization logic for the public `lumina-core` repository.
+
+## [1.0.2] - 2026-04-15
+
+### Changed
+- Site branding refinement: Updated favicon to PNG format for higher compatibility.
+
+## [1.0.1] - 2026-04-15
+
+### Added
+- Premium brand elements and Obsidian Liquid icons.
+- Advanced SEO metadata and GTM analytics integration.
+- Deployment-ready `llms.txt` for AI discovery.
+
+### Fixed
+- Corrected NPM authentication in the production release workflow.
+
 ## [1.0.0] - 2026-04-15 - "Lumina Origin"
 
 The First Stable Production Release.
