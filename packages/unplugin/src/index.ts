@@ -88,7 +88,7 @@ export const luminaUnplugin = createUnplugin((options: LuminaPluginOptions = {})
      */
     transform(code: string, id: string) {
       if (!id) return null
-      if (id.includes('.vue') || id.includes('.astro') || id.includes('.tsx') || id.includes('.jsx')) {
+      if (id.includes('.vue') || id.includes('.astro') || id.includes('.tsx') || id.includes('.jsx') || id.includes('.html')) {
         // console.log(`[Lumina] Transforming: ${id}`)
       }
       return transformLuminaCode(code, id, options)
@@ -144,7 +144,7 @@ export const esbuildPlugin = luminaUnplugin.esbuild
 export function transformLuminaCode(code: string, id: string, options: LuminaPluginOptions = {}) {
   // Only process standard web formats
   // Only process standard web formats (supports query parameters in ID, common in Webpack/Next.js)
-  if (!id.match(/\.(?:[jt]sx?|vue|astro)(?:\?.*)?$/) || id.includes('node_modules')) return null
+  if (!id.match(/\.(?:[jt]sx?|vue|astro|html)(?:\?.*)?$/) || id.includes('node_modules')) return null
 
   const s = new MagicString(code)
   let hasChanged = false
@@ -355,10 +355,10 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
   }
 
   /**
-   * Helper to transform Template-based code (Vue <template> or Astro HTML).
+   * Helper to transform Template-based code (Vue <template>, Astro HTML, or Angular HTML).
    * Uses Regex for fast and surgical attribute extraction in markup.
    */
-  const transformTemplate = (templateCode: string, offset: number, syntax: 'vue' | 'astro') => {
+  const transformTemplate = (templateCode: string, offset: number, syntax: 'vue' | 'astro' | 'angular') => {
     // Looks for <tag t>content</tag> or <tag i18n>content</tag>
     const tagRegex = /<([a-z0-9-]+)[^>]*\s(t|i18n)\s*[^>]*>([\s\S]*?)<\/\1>/gi
     let match
@@ -375,19 +375,27 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
         EXTRACTED_KEYS.set(hash, normalizedContent)
         const escaped = escapeForTemplateLiteral(normalizedContent)
         
-        // Use single braces {} for Astro, double braces {{}} for Vue
-        const replacementContent = syntax === 'astro' 
-          ? `{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }`
-          : `{{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }}`
-        
-        const start = offset + match.index + fullMatch.indexOf(content)
-        const end = start + content.length
-        s.overwrite(start, end, replacementContent)
+        if (syntax === 'angular') {
+          // Angular Strategy: We don't replace the content (to avoid breaking Angular expressions).
+          // Instead, we explicitly set the hash on the 't' attribute so the directive can find it.
+          const tStart = offset + match.index + fullMatch.indexOf(` ${tAttr}`)
+          const tEnd = tStart + tAttr.length + 1
+          s.overwrite(tStart, tEnd, ` ${tAttr}="${hash}"`)
+        } else {
+          // React/Vue/Astro Strategy: Replace the text node with a call to the runtime
+          const replacementContent = syntax === 'astro' 
+            ? `{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }`
+            : `{{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }}`
+          
+          const start = offset + match.index + fullMatch.indexOf(content)
+          const end = start + content.length
+          s.overwrite(start, end, replacementContent)
 
-        // Remove the 't' indicator attribute
-        const tStart = offset + match.index + fullMatch.indexOf(` ${tAttr}`)
-        const tEnd = tStart + tAttr.length + 1
-        s.remove(tStart, tEnd)
+          // Remove the 't' indicator attribute
+          const tStart = offset + match.index + fullMatch.indexOf(` ${tAttr}`)
+          const tEnd = tStart + tAttr.length + 1
+          s.remove(tStart, tEnd)
+        }
         hasChanged = true
       }
     }
@@ -417,8 +425,16 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
       // Pure HTML style Astro file
       transformTemplate(code, 0, 'astro')
     }
+  } else if (id.endsWith('.html')) {
+    // Pure Angular HTML template
+    transformTemplate(code, 0, 'angular')
   } else {
-    // Standard JS/TS file
+    // Standard JS/TS file.
+    // In Angular, components often have inline templates.
+    const inlineTemplateMatch = code.match(/template:\s*`([\s\S]*?)`/)
+    if (inlineTemplateMatch) {
+      transformTemplate(inlineTemplateMatch[1], inlineTemplateMatch.index! + inlineTemplateMatch[0].indexOf(inlineTemplateMatch[1]), 'angular')
+    }
     transformJS(code, 0)
   }
 

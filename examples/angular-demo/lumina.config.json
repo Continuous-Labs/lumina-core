@@ -1,0 +1,7 @@
+{
+  "project": "angular-demo",
+  "locales": ["en", "es"],
+  "defaultLocale": "en",
+  "autoDetect": true,
+  "outputDir": ".lumina/locales"
+}

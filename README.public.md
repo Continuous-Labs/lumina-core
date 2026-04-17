@@ -47,7 +47,7 @@ Lumina shifts the heavy lifting from the browser to the build process using `unp
 ## 📦 Open Source Core
 
 The core engine and local plugins are fully open source. Developers can:
-- Support React, Vue, Svelte, Astro, and Vanilla JS.
+- Support React, Vue, Svelte, Astro, Angular, and Vanilla JS.
 
 ## 🛠️ Getting Started
 
@@ -134,6 +134,7 @@ Explore Lumina in action with our premium framework-specific examples:
 - **[React Demo](./examples/react-demo)**
 - **[Vue Demo](./examples/vue-demo)**
 - **[Astro Demo](./examples/astro-demo)**
+- **[Angular Demo](./examples/angular-demo)**
 
 Each demo features:
 - **Zero-Config Logic:** No manual key mapping.
