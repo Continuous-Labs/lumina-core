@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Unplugin Syntax Parity**: Refined the expression engine to support single-brace `{}` syntax for Svelte/Astro while maintaining double-brace `{{}}` for Vue.
 - **Package ESM Support**: Native ESM support for Svelte packages to resolve module collision issues in modern environments.
+- **Framework Grid Alignment**: Resolved UI regression on the official homepage by migrating the framework stack list to a responsive CSS Grid, ensuring perfect alignment across all viewports.
+- **Mobile Footer Overflow**: Corrected horizontal overflow issues in the footer for Spanish localizations on mobile devices.
+- **Svelte Demo Build**: Fixed CI build failure in `examples/svelte-demo` by adding missing `index.html` and entry point configuration.
+- **FAQ Content Update**: Re-engineered the FAQ section with updated technical documentation on performance, privacy, and universal framework support.
 
 ## [1.2.2] - 2026-04-17
 
