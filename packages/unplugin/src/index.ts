@@ -27,12 +27,6 @@ export const EXTRACTED_KEYS = new Map<string, string>()
  */
 const NON_TRANSLATABLE_TAGS = new Set(['code', 'pre', 'script', 'style', 'textarea'])
 
-/**
- * Ensures strings are safe to be placed inside a backtick template literal.
- */
-function escapeForTemplateLiteral(str: string): string {
-  return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
-}
 
 /**
  * The core Lumina Unplugin.
@@ -219,9 +213,8 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
               const hash = 'id_' + hash64(cleanContent)
               EXTRACTED_KEYS.set(hash, cleanContent)
 
-              const escaped = escapeForTemplateLiteral(cleanContent)
-              // Rewrite the content to call the runtime client
-              const replacement = '{(globalThis.__lumina?.getText(' + "'" + hash + "'" + ', `' + escaped + '`) ?? `' + escaped + '`)}'
+              const escaped = JSON.stringify(cleanContent)
+              const replacement = '{(globalThis.__lumina?.getText("' + hash + '", ' + escaped + ') ?? ' + escaped + ')}'
 
               const contentStart = node.end + offset
               const contentEnd = (parentElement.closingElement ? parentElement.closingElement.start : contentStart) + offset
@@ -262,8 +255,8 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
               if (content) {
                 const hash = 'id_' + hash64(content)
                 EXTRACTED_KEYS.set(hash, content)
-                const escaped = escapeForTemplateLiteral(content)
-                const replacement = '(globalThis.__lumina?.getText(' + "'" + hash + "'" + ', `' + escaped + '`) ?? `' + escaped + '`)'
+                const escaped = JSON.stringify(content)
+                const replacement = '(globalThis.__lumina?.getText("' + hash + '", ' + escaped + ') ?? ' + escaped + ')'
                 
                 s.overwrite(node.start + offset, node.end + offset, replacement)
                 hasChanged = true
@@ -374,19 +367,19 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
         const hash = 'id_' + hash64(normalizedContent)
         EXTRACTED_KEYS.set(hash, normalizedContent)
         console.log(`[Lumina] Extracted key: "${normalizedContent.substring(0, 30)}${normalizedContent.length > 30 ? '...' : ''}" (${hash}) from ${id}`)
-        const escaped = escapeForTemplateLiteral(normalizedContent)
-        
-        if (syntax === 'angular') {
-          // Angular Strategy: We don't replace the content (to avoid breaking Angular expressions).
-          // Instead, we explicitly set the hash on the 't' attribute so the directive can find it.
-          const tStart = offset + match.index + fullMatch.indexOf(` ${tAttr}`)
-          const tEnd = tStart + tAttr.length + 1
-          s.overwrite(tStart, tEnd, ` ${tAttr}="${hash}"`)
-        } else {
-          // React/Vue/Astro Strategy: Replace the text node with a call to the runtime
-          const replacementContent = (syntax === 'astro' || syntax === 'svelte') 
-            ? `{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }`
-            : `{{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }}`
+          const escaped = JSON.stringify(normalizedContent)
+          
+          if (syntax === 'angular') {
+            // Angular Strategy: We don't replace the content (to avoid breaking Angular expressions).
+            // Instead, we explicitly set the hash on the 't' attribute so the directive can find it.
+            const tStart = offset + match.index + fullMatch.indexOf(` ${tAttr}`)
+            const tEnd = tStart + tAttr.length + 1
+            s.overwrite(tStart, tEnd, ` ${tAttr}="${hash}"`)
+          } else {
+            // React/Vue/Astro Strategy: Replace the text node with a call to the runtime
+            const replacementContent = (syntax === 'astro' || syntax === 'svelte') 
+              ? `{globalThis.__lumina?.getText("${hash}", ${escaped}) ?? ${escaped}}`
+              : `{{globalThis.__lumina?.getText("${hash}", ${escaped}) ?? ${escaped}}}`
           
           const start = offset + match.index + fullMatch.indexOf(content)
           const end = start + content.length
