@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/unplugin-lumina",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Universal compiler plugin for Lumina i18n.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {
