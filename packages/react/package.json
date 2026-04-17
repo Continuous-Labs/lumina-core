@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina-react",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "React adapter for Lumina i18n.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {
