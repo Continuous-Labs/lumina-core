@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2026-04-16
+## [1.2.0] - 2026-04-16
 
 ### Added
-- **Browser Language Auto-Detection**: Core engine now automatically identifies and sets user language based on browser preferences if `autoDetect: true` is enabled.
-- **Expanded Documentation**: Updated root, public, and example READMEs to document the new configuration options.
-- **Website Update**: Added technical documentation for the `autoDetect` feature to the official portal.
+- **Official Angular 19+ Adapter**: High-performance integration utilizing Angular Signals for reactive localization.
+- **Enhanced Compiler Support**: Updated `@continuouslabs/unplugin-lumina` to handle Angular `.html` templates and inline `.ts` component templates.
+- **Babel Decorator Support**: The unplugin now correctly parses Angular metadata decorators without interruption.
+- **Universal Framework Showcase**: Redesigned homepage section highlighting compatibility across React, Next.js, Vue, Astro, Angular, and Vanilla JS.
+- **Angular Documentation**: Comprehensive guides for Signals-based i18n added to the official documentation portal.
+
+## [1.1.0] - 2026-04-16
 
 ## [1.0.9] - 2026-04-15
 
