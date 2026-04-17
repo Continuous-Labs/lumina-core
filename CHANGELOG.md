@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-04-16
+
+### Fixed
+- **Critical Build Stabilization**: Refined the `unplugin-lumina` Regex engine to prevent false positives in HTML attribute matching (e.g., correctly distinguishing between the `t` attribute and CSS classes like `text-white`).
+- **Gemini API Key Format Support**: Added support for newer Google AI Studio keys starting with the `AQ.` prefix.
+- **Enhanced API Security**: Transitioned the Gemini translation provider to use secure HTTP headers (`x-goog-api-key`) instead of URL query parameters for authentication.
+
 ## [1.2.0] - 2026-04-16
 
 ### Added
