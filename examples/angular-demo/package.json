@@ -27,7 +27,7 @@
     "@angular-devkit/build-angular": "^19.0.0",
     "@continuouslabs/unplugin-lumina": "workspace:*",
     "@types/node": "^22.0.0",
-    "typescript": "^5.7.0",
+    "typescript": "5.8.3",
     "vite": "^6.2.0",
     "vitest": "^4.1.4"
   }

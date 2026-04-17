@@ -38,7 +38,7 @@ export class LuminaDirective implements OnInit {
      */
     effect(() => {
       // Accessing the signal marks this effect as a dependency
-      const currentLocale = this.lumina.locale()
+      this.lumina.locale()
       this.updateTranslation()
     })
   }
