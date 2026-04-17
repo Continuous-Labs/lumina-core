@@ -88,7 +88,7 @@ export const luminaUnplugin = createUnplugin((options: LuminaPluginOptions = {})
      */
     transform(code: string, id: string) {
       if (!id) return null
-      if (id.includes('.vue') || id.includes('.astro') || id.includes('.tsx') || id.includes('.jsx') || id.includes('.html')) {
+      if (id.includes('.vue') || id.includes('.astro') || id.includes('.svelte') || id.includes('.tsx') || id.includes('.jsx') || id.includes('.html')) {
         // console.log(`[Lumina] Transforming: ${id}`)
       }
       return transformLuminaCode(code, id, options)
@@ -144,7 +144,7 @@ export const esbuildPlugin = luminaUnplugin.esbuild
 export function transformLuminaCode(code: string, id: string, options: LuminaPluginOptions = {}) {
   // Only process standard web formats
   // Only process standard web formats (supports query parameters in ID, common in Webpack/Next.js)
-  if (!id.match(/\.(?:[jt]sx?|vue|astro|html)(?:\?.*)?$/) || id.includes('node_modules')) return null
+  if (!id.match(/\.(?:[jt]sx?|vue|astro|svelte|html)(?:\?.*)?$/) || id.includes('node_modules')) return null
 
   const s = new MagicString(code)
   let hasChanged = false
@@ -358,7 +358,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
    * Helper to transform Template-based code (Vue <template>, Astro HTML, or Angular HTML).
    * Uses Regex for fast and surgical attribute extraction in markup.
    */
-  const transformTemplate = (templateCode: string, offset: number, syntax: 'vue' | 'astro' | 'angular') => {
+  const transformTemplate = (templateCode: string, offset: number, syntax: 'vue' | 'astro' | 'angular' | 'svelte') => {
     // Looks for <tag t>content</tag> or <tag i18n>content</tag>
     const tagRegex = /<([a-z0-9-]+)[^>]*\s(t|i18n)(?=\s|>|=)\s*[^>]*>([\s\S]*?)<\/\1>/gi
     let match
@@ -384,7 +384,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
           s.overwrite(tStart, tEnd, ` ${tAttr}="${hash}"`)
         } else {
           // React/Vue/Astro Strategy: Replace the text node with a call to the runtime
-          const replacementContent = syntax === 'astro' 
+          const replacementContent = (syntax === 'astro' || syntax === 'svelte') 
             ? `{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }`
             : `{{ (globalThis.__lumina?.getText('${hash}', \`${escaped}\`) ?? \`${escaped}\`) }}`
           
@@ -429,6 +429,14 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
   } else if (id.endsWith('.html')) {
     // Pure Angular HTML template
     transformTemplate(code, 0, 'angular')
+  } else if (id.endsWith('.svelte')) {
+    // Svelte Files: script and template
+    const scriptMatch = code.match(/<script[^>]*>([\s\S]*?)<\/script>/)
+    if (scriptMatch) {
+      transformJS(scriptMatch[1], scriptMatch.index! + scriptMatch[0].indexOf(scriptMatch[1]))
+    }
+    // Svelte uses single braces {}, similar to astro in terms of output replacement
+    transformTemplate(code, 0, 'svelte')
   } else {
     // Standard JS/TS file.
     // In Angular, components often have inline templates.

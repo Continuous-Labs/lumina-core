@@ -135,6 +135,7 @@ Explore Lumina in action with our premium framework-specific examples:
 - **[Vue Demo](./examples/vue-demo)**
 - **[Astro Demo](./examples/astro-demo)**
 - **[Angular Demo](./examples/angular-demo)**
+- **[Svelte Demo](./examples/svelte-demo)**
 
 Each demo features:
 - **Zero-Config Logic:** No manual key mapping.
@@ -144,9 +145,9 @@ Each demo features:
 ## 🛤️ Roadmap & Future
 
 Lumina is rapidly evolving. Here's what's coming:
-- **Enhanced SSR Support:** First-class integration for Next.js, Nuxt, and SvelteKit.
-- **Enterprise Collaboration:** Tools for team-based translation management.
 - **Lumina Edge (Coming Soon):** Managed global hosting for your translations with <50ms latency.
+- **Visual Editor**: Over-the-air (OTA) updates.
+- **Managed Extraction**: Automated key synchronization.
 
 ---
 

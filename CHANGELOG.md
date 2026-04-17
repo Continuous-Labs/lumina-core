@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-04-17
+
+### Added
+- **Official Svelte 5 Adapter**: Native integration for Svelte 5 using Runes ($state) for high-performance reactive localization.
+- **Svelte Compiler Support**: Updated `@continuouslabs/unplugin-lumina` to handle `.svelte` files, including script/template extraction and single-brace expression generation.
+- **Svelte Documentation**: New integration guides and installation steps added to the documentation portal.
+- **Svelte Showcase**: Added Svelte 5 to the framework showcase on the official homepage.
+- **AI Agent Onboarding**: Introduced `GEMINI.md` to provide immediate context and surgical navigation for AI coding assistants.
+
+### Fixed
+- **Unplugin Syntax Parity**: Refined the expression engine to support single-brace `{}` syntax for Svelte/Astro while maintaining double-brace `{{}}` for Vue.
+- **Package ESM Support**: Native ESM support for Svelte packages to resolve module collision issues in modern environments.
+
 ## [1.2.2] - 2026-04-17
 
 ### Fixed

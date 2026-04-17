@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Core engine for Lumina i18n: hashing and signals-based state.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {
