@@ -287,7 +287,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
               // For vanilla JS, we just extract the keys for translation.
               // Note: We don't perform surgery inside the template literal yet to keep it stable
               // as vanilla JS usually doesn't have a built-in reactive DOM engine.
-              const tagRegex = /<([a-z0-9-]+)[^>]*\s(t|i18n)\s*[^>]*>([\s\S]*?)<\/\1>/gi
+              const tagRegex = /<([a-z0-9-]+)[^>]*\s(t|i18n)(?=\s|>|=)\s*[^>]*>([\s\S]*?)<\/\1>/gi
               let match
               while ((match = tagRegex.exec(raw)) !== null) {
                 const content = match[3].trim()
@@ -360,7 +360,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
    */
   const transformTemplate = (templateCode: string, offset: number, syntax: 'vue' | 'astro' | 'angular') => {
     // Looks for <tag t>content</tag> or <tag i18n>content</tag>
-    const tagRegex = /<([a-z0-9-]+)[^>]*\s(t|i18n)\s*[^>]*>([\s\S]*?)<\/\1>/gi
+    const tagRegex = /<([a-z0-9-]+)[^>]*\s(t|i18n)(?=\s|>|=)\s*[^>]*>([\s\S]*?)<\/\1>/gi
     let match
     while ((match = tagRegex.exec(templateCode)) !== null) {
       const [fullMatch, tagName, tAttr, content] = match
