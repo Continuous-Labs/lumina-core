@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Monorepo Build Stabilization**: Pinned TypeScript to `~5.7.3` monorepo-wide to resolve `NgCompiler` and AnalogJS compilation incompatibilities found in newer versions.
 - **Angular Demo Resolution**: Restored AnalogJS/Vite 6 production build support by providing a standard server entry point and stabilizing the Rollup build configuration.
 - **Localization Parity**: Completed full Spanish translation sync for the documentation portal and examples.
+- **Portal Refinement**: Standardized hero tagline to "Invisible" and implemented fluid typography for improved mobile layout stability.
 - **Repository Integrity**: Restored core CLI binaries and internal architecture manifests accidentally removed during workspace maintenance.
 
 ## [1.2.1] - 2026-04-16
