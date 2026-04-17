@@ -3,5 +3,10 @@
   "locales": ["en", "es"],
   "defaultLocale": "en",
   "autoDetect": true,
+  "provider": "gemini",
+  "gemini": {
+    "apiKey": "YOUR_GEMINI_API_KEY",
+    "model": "gemini-2.0-flash"
+  },
   "outputDir": ".lumina/locales"
 }

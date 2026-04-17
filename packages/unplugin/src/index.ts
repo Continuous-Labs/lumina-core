@@ -20,7 +20,7 @@ export interface LuminaPluginOptions {
  * Persistent map to track extracted keys during the build process.
  * This ensures we only write unique keys to the original.json file.
  */
-const EXTRACTED_KEYS = new Map<string, string>()
+export const EXTRACTED_KEYS = new Map<string, string>()
 
 /**
  * Tags that should NEVER be translated.
