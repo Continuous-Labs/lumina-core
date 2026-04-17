@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Core engine for Lumina i18n: hashing and signals-based state.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {
@@ -22,7 +22,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "~5.7.3"
   },
   "license": "MIT",
   "author": "Felix Jara (https://felixjara.me)"

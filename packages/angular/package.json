@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina-angular",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Premium Angular adapter for Lumina i18n using Signals.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {
@@ -25,7 +25,7 @@
     "@angular/compiler": "^19.0.0",
     "@angular/core": "^19.0.0",
     "@angular/platform-browser": "^19.0.0",
-    "typescript": "^5.7.0",
+    "typescript": "~5.7.3",
     "unbuild": "^3.0.0",
     "vitest": "^4.1.4",
     "rxjs": "^7.8.1",

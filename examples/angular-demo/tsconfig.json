@@ -22,5 +22,5 @@
       "@continuouslabs/lumina-angular": ["../../packages/angular/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.html", "vite.config.ts"]
+  "include": ["src/**/*.ts", "src/main.server.ts", "src/**/*.html", "vite.config.ts"]
 }

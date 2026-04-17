@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina-cli",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Premium AI-powered i18n engine with zero-config extraction. Master package and CLI.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {
@@ -27,7 +27,7 @@
     "@continuouslabs/lumina": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
+    "typescript": "~5.7.3",
     "unbuild": "^2.0.0"
   },
   "license": "MIT",

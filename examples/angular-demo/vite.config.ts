@@ -4,12 +4,21 @@ import { vitePlugin as lumina } from '@continuouslabs/unplugin-lumina'
 
 export default defineConfig(({ mode }) => ({
   plugins: [
-    analog(),
+    analog({
+      ssr: false
+    }),
     lumina({
       locales: ['en', 'es'],
       outputDir: './.lumina/locales'
     })
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'index.html'
+      }
+    }
+  },
   test: {
     globals: true,
     environment: 'jsdom',
