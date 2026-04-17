@@ -9,15 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Browser Language Auto-Detection**: Core engine now automatically identifies and sets user language based on browser preferences if `autoDetect: true` is enabled.
-- **Continuous Integration**: New GitHub Actions pipeline for automated unit testing on `develop` and `main` branches.
-- **Quality Gates**: Formalized branching policy where `main` is reserved for tagged releases and `develop` serves as the integration branch.
 - **Expanded Documentation**: Updated root, public, and example READMEs to document the new configuration options.
 - **Website Update**: Added technical documentation for the `autoDetect` feature to the official portal.
-
-### Changed
-- Reorganized `MAINTENANCE_FLOW.md` to include mandatory CI checks and changelog update requirements.
-- Unified monorepo versioning policy for the upcoming release.
-- **Maintenance Flow**: Updated documentation to restrict `main` branch updates to release cycles only.
 
 ## [1.0.9] - 2026-04-15
 
