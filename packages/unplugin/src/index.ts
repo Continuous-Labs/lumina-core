@@ -156,7 +156,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
     try {
       const ast = parse(jsCode, {
         sourceType: 'module',
-        plugins: ['jsx', 'typescript'],
+        plugins: ['jsx', 'typescript', 'decorators-legacy'],
         errorRecovery: true
       })
 
@@ -373,6 +373,7 @@ export function transformLuminaCode(code: string, id: string, options: LuminaPlu
       if (normalizedContent && !NON_TRANSLATABLE_TAGS.has(tagName)) {
         const hash = 'id_' + hash64(normalizedContent)
         EXTRACTED_KEYS.set(hash, normalizedContent)
+        console.log(`[Lumina] Extracted key: "${normalizedContent.substring(0, 30)}${normalizedContent.length > 30 ? '...' : ''}" (${hash}) from ${id}`)
         const escaped = escapeForTemplateLiteral(normalizedContent)
         
         if (syntax === 'angular') {
