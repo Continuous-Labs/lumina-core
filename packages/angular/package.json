@@ -1,6 +1,6 @@
 {
   "name": "@continuouslabs/lumina-angular",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Premium Angular adapter for Lumina i18n using Signals.",
   "homepage": "https://lumina-i18n.dev",
   "repository": {
