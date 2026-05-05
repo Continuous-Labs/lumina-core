@@ -32,6 +32,12 @@
     "dev": "unbuild --stub",
     "test": "vitest --environment happy-dom run"
   },
+  "keywords": [
+    "i18n",
+    "vue",
+    "lumina",
+    "internationalization"
+  ],
   "license": "MIT",
   "author": "Felix Jara (https://felixjara.me)"
 }

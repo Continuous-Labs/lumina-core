@@ -41,6 +41,15 @@
     "dev": "unbuild --stub",
     "test": "vitest run"
   },
+  "keywords": [
+    "i18n",
+    "vite",
+    "webpack",
+    "rollup",
+    "unplugin",
+    "lumina",
+    "internationalization"
+  ],
   "license": "MIT",
   "author": "Felix Jara (https://felixjara.me)"
 }

@@ -30,6 +30,15 @@
     "typescript": "~5.7.3",
     "unbuild": "^2.0.0"
   },
+  "keywords": [
+    "i18n",
+    "cli",
+    "lumina",
+    "translation",
+    "gemini",
+    "ai",
+    "internationalization"
+  ],
   "license": "MIT",
   "author": "Felix Jara (https://felixjara.me)"
 }

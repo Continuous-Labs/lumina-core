@@ -32,6 +32,12 @@
     "dev": "unbuild --stub",
     "test": "vitest run"
   },
+  "keywords": [
+    "i18n",
+    "astro",
+    "lumina",
+    "internationalization"
+  ],
   "license": "MIT",
   "author": "Felix Jara (https://felixjara.me)"
 }
