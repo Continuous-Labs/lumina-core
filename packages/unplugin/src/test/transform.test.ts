@@ -27,7 +27,7 @@ describe('Lumina Unplugin Transformation', () => {
 `
     const result = transformLuminaCode(input, 'App.vue')
     
-    expect(result?.code).toContain('{{ (globalThis.__lumina?.getText')
+    expect(result?.code).toContain('{{globalThis.__lumina?.getText')
     expect(result?.code).toContain('Click Me')
     expect(result?.code).not.toContain(' t>')
   })
@@ -40,7 +40,7 @@ describe('Lumina Unplugin Transformation', () => {
 `
     const result = transformLuminaCode(input, 'App.vue')
     
-    expect(result?.code).toContain('{{ (globalThis.__lumina?.getText')
+    expect(result?.code).toContain('{{globalThis.__lumina?.getText')
     expect(result?.code).not.toContain(' i18n>')
   })
 
@@ -51,7 +51,7 @@ const name = "Lumina"
 <h1 t>Welcome to {name}</h1>`
     const result = transformLuminaCode(input, 'index.astro')
     
-    expect(result?.code).toContain('{ (globalThis.__lumina?.getText')
+    expect(result?.code).toContain('{globalThis.__lumina?.getText')
     expect(result?.code).toContain('Welcome to {expr}')
     expect(result?.code).not.toContain('{{')
   })
